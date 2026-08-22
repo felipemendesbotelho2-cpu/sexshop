@@ -558,8 +558,8 @@
    ============================================================ */
 const WHATSAPP_NUMBER = "5563981069130";
 
-// URL publicada da planilha
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ06362yXazDa35hSckBl2Hwz_yPjMrxwKG_z5iDRO5mQCNC0u4fNGRSbSywmyvzNGm-MlfGFNgI_yx/pubhtml";
+// URL de exportação CSV da planilha publicada (evita bloqueio de CORS do formato pubhtml)
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuaOt7cH03VBDepEMzXqD8888WGDsd9StzE9dR4-Hk00KoymEqmUMRWFYsAHmqgYeXED-XdgpmVgd1/pub?output=csv";
 
 // Configuração de CACHE (Evita requisições excessivas e protege contra superlotação)
 const CACHE_KEY = "sexshop_products_cache";
@@ -570,6 +570,34 @@ let PRODUCTS = [];
 let CATEGORIES = [];
 
 function money(v){ return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
+
+/* ============================================================
+   CATEGORIAS FIXAS (ordem de exibição)
+   A planilha pode escrever com acento/maiúscula diferente que
+   ainda assim vai casar com a categoria certa aqui embaixo.
+   ============================================================ */
+const CATEGORY_ORDER = [
+  "Cosméticos Eróticos",
+  "Vibradores",
+  "Produtos Anal",
+  "Masturbadores Masculinos",
+  "BDSM e Fetichismo",
+  "Lingeries e Acessórios"
+];
+
+function normalizeCat(str){
+  return (str || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().trim();
+}
+
+// Se o texto vindo da planilha bater (ignorando acento/caixa) com uma
+// das categorias fixas, usa o nome "oficial" pra exibir sempre igual.
+// Se não bater com nenhuma, mantém o texto como veio da planilha.
+function canonicalCategory(rawCat){
+  const found = CATEGORY_ORDER.find(c => normalizeCat(c) === normalizeCat(rawCat));
+  return found || (rawCat || 'Geral');
+}
 
 /* ============================================================
    SISTEMA DE BUSCA DA PLANILHA + CACHE ANTI-SOBRECARGA
@@ -589,26 +617,24 @@ async function fetchSheetData() {
 
   try {
     const response = await fetch(SHEET_URL);
-    const htmlText = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlText, "text/html");
-    const rows = doc.querySelectorAll("table.waffle tbody tr");
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
 
     const fetchedProducts = [];
     let idCounter = 1;
 
-    rows.forEach((row, index) => {
-      const cells = row.querySelectorAll("td");
+    rows.forEach((cells, index) => {
       // Pula o cabeçalho se houver
-      if (index === 0 && cells[0] && cells[0].innerText.toLowerCase().includes("sku")) return;
+      if (index === 0 && cells[0] && cells[0].toLowerCase().includes("sku")) return;
 
       if (cells.length >= 8) {
-        const cat = cells[1] ? cells[1].innerText.trim() : "Geral";
-        const nome = cells[2] ? cells[2].innerText.trim() : "";
-        const desc = cells[3] ? cells[3].innerText.trim() : "";
-        const precoRaw = cells[5] ? cells[5].innerText.trim() : "0";
-        const img = cells[7] ? cells[7].innerText.trim() : "";
-        const status = cells[8] ? cells[8].innerText.trim().toLowerCase() : "ativo";
+        const cat = canonicalCategory(cells[1] ? cells[1].trim() : "Geral");
+        const nome = cells[2] ? cells[2].trim() : "";
+        const desc = cells[3] ? cells[3].trim() : "";
+        const precoRaw = cells[5] ? cells[5].trim() : "0";
+        const img = cells[7] ? cells[7].trim() : "";
+        const status = cells[8] ? cells[8].trim().toLowerCase() : "ativo";
 
         // Trata preço formatado em real (R$ 0,00 -> 0.00)
         let preco = parseFloat(precoRaw.replace(/[^\d,-]/g, '').replace(',', '.'));
@@ -647,8 +673,43 @@ async function fetchSheetData() {
   initApp();
 }
 
+// Leitor simples de CSV (lida com aspas, vírgulas e quebras de linha dentro de campos)
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (inQuotes) {
+      if (char === '"' && next === '"') { field += '"'; i++; }
+      else if (char === '"') { inQuotes = false; }
+      else { field += char; }
+    } else {
+      if (char === '"') { inQuotes = true; }
+      else if (char === ',') { row.push(field); field = ''; }
+      else if (char === '\r') { /* ignora */ }
+      else if (char === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+      else { field += char; }
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+
+  return rows.filter(r => r.some(c => c.trim() !== ''));
+}
+
 function extractCategories() {
-  CATEGORIES = [...new Set(PRODUCTS.map(p => p.categoria))].filter(Boolean);
+  const found = [...new Set(PRODUCTS.map(p => p.categoria))].filter(Boolean);
+
+  // Primeiro as categorias fixas (só as que têm produto ativo na planilha),
+  // na ordem definida em CATEGORY_ORDER
+  const ordered = CATEGORY_ORDER.filter(cat => found.includes(cat));
+
+  // Depois, qualquer categoria que veio da planilha e não está na lista fixa
+  const extras = found.filter(cat => !CATEGORY_ORDER.includes(cat));
+
+  CATEGORIES = [...ordered, ...extras];
 }
 
 /* ============================================================
