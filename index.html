@@ -426,6 +426,8 @@
 <section class="section" id="colecao">
   <div id="cat-tabs" class="cat-tabs"></div>
 
+  <!-- Destaques desativados por enquanto. Pra reativar, descomente o bloco abaixo
+       e a chamada de renderFeatured() no final do <script>.
   <div id="destaques" style="margin-bottom:40px;">
     <div class="section-head" style="margin-bottom:22px;">
       <span class="eyebrow">Explore por estilo</span>
@@ -433,6 +435,7 @@
     </div>
     <div id="featured-scroll" class="cat-showcase"></div>
   </div>
+  -->
 
   <div id="product-grid" class="grid"></div>
 </section>
@@ -1018,7 +1021,7 @@ function showToast(text){
    INICIALIZAÇÃO DA APLICAÇÃO
    ============================================================ */
 function initApp(){
-  renderFeatured();
+  // renderFeatured(); // destaques desativados por enquanto
   renderCatTabs();
   renderProducts();
   renderCart();
