@@ -42,7 +42,6 @@
     padding-top:64px;
     position:relative;
   }
-  /* textura sutil de veludo capitonê (efeito quarto de motel) */
   body::before{
     content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
     opacity:.5;
@@ -64,7 +63,6 @@
     color:var(--gold); font-weight:700;
   }
 
-  /* signature seal divider */
   .seal-divider{ display:flex; align-items:center; gap:14px; margin:0 auto; max-width:220px; }
   .seal-divider .line{ flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--panel-line)); }
   .seal-divider .line.rev{ background:linear-gradient(270deg, transparent, var(--panel-line)); }
@@ -130,44 +128,6 @@
   .search-mobile.open{ display:block; }
   .search-mobile .search-wrap{ display:block; max-width:none; }
 
-  /* ============ HERO ============ */
-  .hero{
-    position:relative; padding:56px 20px 60px; text-align:center; overflow:hidden;
-    background:
-      radial-gradient(ellipse 70% 55% at 50% 0%, var(--wine-glow), transparent 65%),
-      var(--void);
-  }
-  .hero::after{
-    content:''; position:absolute; inset:0; opacity:.5; pointer-events:none;
-    background-image:
-      linear-gradient(var(--panel-line) 1px, transparent 1px);
-    background-size:100% 44px;
-    mask-image:linear-gradient(to bottom, black, transparent 85%);
-  }
-  .hero-content{ position:relative; max-width:560px; margin:0 auto; }
-  .hero .eyebrow{ display:inline-block; margin-bottom:18px; }
-  .hero h1{
-    font-size:clamp(30px,7vw,44px); line-height:1.12; color:var(--ivory); margin-bottom:16px;
-  }
-  .hero h1 em{ color:var(--gold-soft); font-style:italic; }
-  .hero p{ color:var(--muted); font-size:14.5px; max-width:420px; margin:0 auto 30px; }
-  .hero-ctas{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:8px;
-    padding:13px 26px; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
-    font-weight:700; border-radius:var(--radius); transition:transform .2s, background .2s, border-color .2s;
-    white-space:nowrap;
-  }
-  .btn:hover{ transform:translateY(-2px); }
-  .btn-wine{ background:var(--wine); color:#fff; }
-  .btn-wine:hover{ background:var(--wine-light); }
-  .btn-ghost{ border:1px solid var(--panel-line); color:var(--ivory); }
-  .btn-ghost:hover{ border-color:var(--gold); }
-  .btn-gold{ background:var(--gold); color:#1a1410; }
-  .btn-gold:hover{ background:var(--gold-soft); }
-  .btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
-
-  /* trust strip */
   .trust{
     display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
     background:var(--panel-line); border-top:1px solid var(--panel-line); border-bottom:1px solid var(--panel-line);
@@ -179,21 +139,9 @@
   .trust p{ font-size:11px; letter-spacing:.03em; color:var(--muted); line-height:1.4; }
   .trust strong{ display:block; color:var(--ivory); font-size:12.5px; font-weight:700; margin-bottom:3px; }
 
-  /* ============ SECTION HEADINGS ============ */
   .section{ padding:56px 20px; max-width:1180px; margin:0 auto; }
   .section-head{ text-align:center; margin-bottom:36px; }
-  .section-head h2{ font-size:clamp(26px,5vw,34px); color:var(--ivory); margin-top:10px; }
-  .section-head p{ color:var(--muted); font-size:13.5px; margin-top:10px; max-width:420px; margin-left:auto; margin-right:auto; }
 
-  /* ============ DESTAQUES (VITRINE DE CATEGORIAS) ============ */
-  .featured{
-    background:
-      radial-gradient(ellipse 80% 100% at 50% 0%, var(--wine-glow), transparent 60%),
-      var(--panel);
-    border-top:1px solid var(--panel-line);
-    border-bottom:1px solid var(--panel-line);
-    padding:52px 20px 56px;
-  }
   .cat-showcase{
     max-width:1180px; margin:0 auto;
     display:grid; grid-template-columns:repeat(2,1fr); gap:14px;
@@ -224,21 +172,12 @@
   }
   .cat-tile:hover .cat-tile-icon{ background:var(--wine); transform:scale(1.06); }
   .cat-tile-icon svg{ width:22px; height:22px; color:var(--gold-soft); position:relative; }
-  .cat-tile h3{
-    position:relative; font-size:16.5px; color:var(--ivory); line-height:1.25;
-  }
-  .cat-tile .cat-count{
-    position:relative; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
-    color:var(--muted); font-weight:700;
-  }
-  .cat-tile .cat-link{
-    position:relative; margin-top:2px; font-size:11px; letter-spacing:.06em; text-transform:uppercase;
-    font-weight:700; color:var(--gold-soft); display:inline-flex; align-items:center; gap:4px;
-  }
+  .cat-tile h3{ position:relative; font-size:16.5px; color:var(--ivory); line-height:1.25; }
+  .cat-tile .cat-count{ position:relative; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+  .cat-tile .cat-link{ position:relative; margin-top:2px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; font-weight:700; color:var(--gold-soft); display:inline-flex; align-items:center; gap:4px; }
   .cat-tile .cat-link svg{ width:11px; height:11px; transition:transform .3s; }
   .cat-tile:hover .cat-link svg{ transform:translateX(3px); }
 
-  /* ============ ABAS DE CATEGORIA ============ */
   .cat-tabs{
     display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:28px;
     -webkit-overflow-scrolling:touch; scrollbar-width:none;
@@ -252,7 +191,6 @@
   .cat-tab:hover{ border-color:var(--gold); color:var(--ivory); }
   .cat-tab.active{ background:var(--wine); border-color:var(--wine); color:#fff; }
 
-  /* ============ PRODUCT GRID ============ */
   .grid{ display:grid; grid-template-columns:1fr; gap:22px; }
   @media (min-width:560px){ .grid{ grid-template-columns:repeat(2,1fr); } }
   @media (min-width:900px){ .grid{ grid-template-columns:repeat(3,1fr); } }
@@ -286,13 +224,11 @@
 
   .empty-note{ text-align:center; color:var(--muted); font-size:13px; padding:40px 0; grid-column:1/-1; }
 
-  /* ============ FOOTER ============ */
   footer{ border-top:1px solid var(--panel-line); padding:44px 20px 90px; text-align:center; }
   footer .seal-mark{ margin:0 auto 14px; }
   footer p{ color:var(--muted); font-size:12px; max-width:360px; margin:0 auto 6px; }
   footer .fine{ color:var(--muted-2); font-size:10.5px; margin-top:18px; letter-spacing:.03em; }
 
-  /* ============ FLOATING CART BUTTON (mobile) ============ */
   .fab-cart{
     position:fixed; bottom:20px; right:20px; z-index:45;
     width:54px; height:54px; border-radius:50%; background:var(--wine);
@@ -301,14 +237,12 @@
   .fab-cart svg{ width:22px; height:22px; color:#fff; }
   .fab-cart .cart-badge{ background:var(--gold); color:#1a1410; }
 
-  /* ============ OVERLAY ============ */
   .overlay{
     position:fixed; inset:0; background:rgba(6,5,6,0.7); z-index:60;
     opacity:0; pointer-events:none; transition:opacity .3s;
   }
   .overlay.show{ opacity:1; pointer-events:auto; }
 
-  /* ============ CART DRAWER ============ */
   .drawer{
     position:fixed; top:0; right:0; height:100%; width:100%; max-width:420px;
     background:var(--void); border-left:1px solid var(--panel-line); z-index:70;
@@ -350,6 +284,15 @@
   .sum-row{ display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:8px; }
   .sum-row.total{ font-size:16px; color:var(--ivory); font-weight:700; margin:12px 0 16px; }
   .sum-row.total b{ font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--gold-soft); }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:13px 26px; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+    font-weight:700; border-radius:var(--radius); transition:transform .2s, background .2s, border-color .2s;
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-wine{ background:var(--wine); color:#fff; }
+  .btn-wine:hover{ background:var(--wine-light); }
   .drawer-foot .btn{ width:100%; }
   .discreet-note{
     display:flex; align-items:center; gap:8px; font-size:10.5px; color:var(--muted);
@@ -357,7 +300,6 @@
   }
   .discreet-note svg{ width:13px; height:13px; color:var(--gold); flex-shrink:0; }
 
-  /* ============ CHECKOUT MODAL ============ */
   .modal{
     position:fixed; inset:0; z-index:80; display:flex; align-items:flex-end; justify-content:center;
     opacity:0; pointer-events:none; transition:opacity .3s;
@@ -431,7 +373,6 @@
 </head>
 <body>
 
-<!-- ============ HEADER ============ -->
 <header>
   <div class="header-inner">
     <a href="#topo" class="brand">
@@ -482,7 +423,6 @@
   </div>
 </div>
 
-<!-- ============ CATÁLOGO ============ -->
 <section class="section" id="colecao">
   <div id="cat-tabs" class="cat-tabs"></div>
 
@@ -499,7 +439,6 @@
 
 <div class="seal-divider"><span class="line"></span><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-2.5 1-4 2.8-4 5 0 2.6 2.2 4 4 5.5 1.8-1.5 4-2.9 4-5.5 0-2.2-1.5-4-4-5Z"/><path d="M12 13.5V21M12 21c-2 0-3.5-1.2-4-2.5M12 21c2 0 3.5-1.2 4-2.5"/></svg></span><span class="line rev"></span></div>
 
-<!-- ============ FOOTER ============ -->
 <footer>
   <div class="seal-mark">S</div>
   <p><strong style="color:var(--gold-soft);">Sex Shop</strong></p>
@@ -507,17 +446,14 @@
   <p class="fine">&copy; 2026 Sex Shop. Todos os direitos reservados. Produtos destinados a maiores de 18 anos.</p>
 </footer>
 
-<!-- ============ FAB CARRINHO ============ -->
 <button class="fab-cart" onclick="openCart()" aria-label="Abrir carrinho">
   <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.94-4.693 2.443-7.153.107-.523-.307-1.005-.841-1.005H5.106M7.5 14.25 5.106 5.114M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
   <span id="cart-badge-fab" class="cart-badge" style="display:none;">0</span>
 </button>
 
-<!-- ============ OVERLAYS ============ -->
 <div id="overlay-cart" class="overlay" onclick="closeCart()"></div>
 <div id="overlay-modal" class="overlay" onclick="closeCheckout()"></div>
 
-<!-- ============ CARRINHO (DRAWER) ============ -->
 <aside class="drawer" id="cart-drawer">
   <div class="drawer-head">
     <h3>Sua sacola</h3>
@@ -537,7 +473,6 @@
   </div>
 </aside>
 
-<!-- ============ CHECKOUT (MODAL) ============ -->
 <div class="modal" id="checkout-modal">
   <div class="modal-panel">
     <div class="modal-head">
@@ -619,61 +554,111 @@
 
 <script>
 /* ============================================================
-   CATÁLOGO
+   CONFIGURAÇÕES E INTEGRAÇÃO GOOGLE SHEETS
    ============================================================ */
 const WHATSAPP_NUMBER = "5563981069130";
 
-const CATEGORIES = ["Lingeries", "Gel", "Brinquedos", "Kit Fantasia"];
+// URL publicada da planilha
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ06362yXazDa35hSckBl2Hwz_yPjMrxwKG_z5iDRO5mQCNC0u4fNGRSbSywmyvzNGm-MlfGFNgI_yx/pubhtml";
 
-const PRODUCTS = [
-  {
-    id: 1,
-    nome: "Calcinha Renda",
-    categoria: "Lingeries",
-    preco: 39.90,
-    destaque: true,
-    desc: "Calcinha em renda delicada, acabamento acetinado e caimento confortável.",
-    img: "https://placehold.co/600x750/2f0f16/e7cf94?text=Calcinha+Renda"
-  },
-  {
-    id: 2,
-    nome: "Gel Lubrificante",
-    categoria: "Gel",
-    preco: 34.90,
-    destaque: true,
-    desc: "Fórmula à base de água, hipoalergênica, sem sabor e sem cheiro, compatível com preservativo.",
-    img: "https://placehold.co/600x750/2f0f16/e7cf94?text=Gel+Lubrificante"
-  },
-  {
-    id: 3,
-    nome: "Vibrador",
-    categoria: "Brinquedos",
-    preco: 129.90,
-    destaque: true,
-    desc: "Estimulador em silicone macio, com múltiplos modos de vibração e resistente à água.",
-    img: "https://placehold.co/600x750/2f0f16/e7cf94?text=Vibrador"
-  },
-  {
-    id: 4,
-    nome: "Kit Fantasia",
-    categoria: "Kit Fantasia",
-    preco: 69.90,
-    destaque: true,
-    desc: "Kit com peças e acessórios para brincadeiras a dois, tecido leve e confortável.",
-    img: "https://placehold.co/600x750/2f0f16/e7cf94?text=Kit+Fantasia"
-  }
-];
+// Configuração de CACHE (Evita requisições excessivas e protege contra superlotação)
+const CACHE_KEY = "sexshop_products_cache";
+const CACHE_TIME_KEY = "sexshop_cache_time";
+const CACHE_DURATION_MS = 30 * 60 * 1000; // 30 minutos em milissegundos
+
+let PRODUCTS = [];
+let CATEGORIES = [];
 
 function money(v){ return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
 
 /* ============================================================
-   CARD DE PRODUTO (compartilhado entre grade e destaques)
+   SISTEMA DE BUSCA DA PLANILHA + CACHE ANTI-SOBRECARGA
+   ============================================================ */
+async function fetchSheetData() {
+  const cachedProducts = localStorage.getItem(CACHE_KEY);
+  const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+  const now = Date.now();
+
+  // Verifica se o cache é válido e recente
+  if (cachedProducts && cacheTime && (now - parseInt(cacheTime)) < CACHE_DURATION_MS) {
+    PRODUCTS = JSON.parse(cachedProducts);
+    extractCategories();
+    initApp();
+    return;
+  }
+
+  try {
+    const response = await fetch(SHEET_URL);
+    const htmlText = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, "text/html");
+    const rows = doc.querySelectorAll("table.waffle tbody tr");
+
+    const fetchedProducts = [];
+    let idCounter = 1;
+
+    rows.forEach((row, index) => {
+      const cells = row.querySelectorAll("td");
+      // Pula o cabeçalho se houver
+      if (index === 0 && cells[0] && cells[0].innerText.toLowerCase().includes("sku")) return;
+
+      if (cells.length >= 8) {
+        const cat = cells[1] ? cells[1].innerText.trim() : "Geral";
+        const nome = cells[2] ? cells[2].innerText.trim() : "";
+        const desc = cells[3] ? cells[3].innerText.trim() : "";
+        const precoRaw = cells[5] ? cells[5].innerText.trim() : "0";
+        const img = cells[7] ? cells[7].innerText.trim() : "";
+        const status = cells[8] ? cells[8].innerText.trim().toLowerCase() : "ativo";
+
+        // Trata preço formatado em real (R$ 0,00 -> 0.00)
+        let preco = parseFloat(precoRaw.replace(/[^\d,-]/g, '').replace(',', '.'));
+        if (isNaN(preco)) preco = 0;
+
+        // Adiciona apenas produtos válidos e ativos
+        if (nome && status === "ativo") {
+          fetchedProducts.push({
+            id: idCounter++,
+            nome: nome,
+            categoria: cat,
+            preco: preco,
+            desc: desc,
+            img: img || "https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem"
+          });
+        }
+      }
+    });
+
+    if (fetchedProducts.length > 0) {
+      PRODUCTS = fetchedProducts;
+      localStorage.setItem(CACHE_KEY, JSON.stringify(PRODUCTS));
+      localStorage.setItem(CACHE_TIME_KEY, now.toString());
+    } else if (cachedProducts) {
+      // Fallback para o cache antigo caso a planilha retorne vazia
+      PRODUCTS = JSON.parse(cachedProducts);
+    }
+  } catch (error) {
+    console.error("Erro ao carregar planilha. Utilizando cache salvo:", error);
+    if (cachedProducts) {
+      PRODUCTS = JSON.parse(cachedProducts);
+    }
+  }
+
+  extractCategories();
+  initApp();
+}
+
+function extractCategories() {
+  CATEGORIES = [...new Set(PRODUCTS.map(p => p.categoria))].filter(Boolean);
+}
+
+/* ============================================================
+   CARD DE PRODUTO
    ============================================================ */
 function cardHTML(p, extraClass){
   return `
     <div class="card${extraClass ? ' ' + extraClass : ''}">
       <div class="card-img">
-        <img src="${p.img}" alt="${p.nome}" loading="lazy" />
+        <img src="${p.img}" alt="${p.nome}" loading="lazy" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
         <span class="card-tag">${p.categoria}</span>
       </div>
       <div class="card-body">
@@ -691,26 +676,31 @@ function cardHTML(p, extraClass){
 }
 
 /* ============================================================
-   VITRINE DE CATEGORIAS (DESTAQUES)
+   VITRINE DE CATEGORIAS
    ============================================================ */
 const CATEGORY_ICONS = {
-  "Lingeries": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5C19 15.65 12 20 12 20Z"/>',
-  "Gel": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
-  "Brinquedos": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
-  "Kit Fantasia": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 10c0-1.5 1-2.5 3-2.5s3 1.5 4 1.5 2-1.5 4-1.5 3 1 3 2.5c0 3-3 6-7 8-4-2-7-5-7-8Z"/>'
+  "Cosméticos Eróticos": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
+  "Vibradores": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
+  "Dildos e Próteses": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  "Produtos Anal": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/>',
+  "Masturbadores Masculinos": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m-8-8h16"/>',
+  "BDSM e Fetichismo": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
+  "Lingeries e Acessórios": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5C19 15.65 12 20 12 20Z"/>',
+  "Higiene, Cuidados e Jogos": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 10c0-1.5 1-2.5 3-2.5s3 1.5 4 1.5 2-1.5 4-1.5 3 1 3 2.5c0 3-3 6-7 8-4-2-7-5-7-8Z"/>'
 };
 
 function renderFeatured(){
   const wrap = document.getElementById('featured-scroll');
+  if(!wrap) return;
   wrap.innerHTML = CATEGORIES.map(cat => {
     const count = PRODUCTS.filter(p => p.categoria === cat).length;
-    const icon = CATEGORY_ICONS[cat] || '';
+    const icon = CATEGORY_ICONS[cat] || '<path fill="none" stroke="currentColor" stroke-width="1.6" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/>';
     return `
       <button type="button" class="cat-tile" onclick="goToCategory('${cat.replace(/'/g, "\\'")}')">
         <span class="cat-tile-icon"><svg viewBox="0 0 24 24">${icon}</svg></span>
         <h3>${cat}</h3>
-        <span class="cat-count">${count} ${count === 1 ? 'peça' : 'peças'}</span>
-        <span class="cat-link">Ver peças
+        <span class="cat-count">${count} ${count === 1 ? 'item' : 'itens'}</span>
+        <span class="cat-link">Ver produtos
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
         </span>
       </button>`;
@@ -729,6 +719,7 @@ let activeCategory = 'Todos';
 
 function renderCatTabs(){
   const wrap = document.getElementById('cat-tabs');
+  if(!wrap) return;
   const cats = ['Todos', ...CATEGORIES];
   wrap.innerHTML = cats.map(c => `
     <button type="button" class="cat-tab${c === activeCategory ? ' active' : ''}" onclick="selectCategory('${c.replace(/'/g, "\\'")}')">${c}</button>
@@ -747,6 +738,7 @@ function selectCategory(cat){
    ============================================================ */
 function renderProducts(filter){
   const grid = document.getElementById('product-grid');
+  if(!grid) return;
   const term = (filter || '').trim().toLowerCase();
 
   let list = activeCategory === 'Todos'
@@ -754,7 +746,7 @@ function renderProducts(filter){
     : PRODUCTS.filter(p => p.categoria === activeCategory);
 
   if (term){
-    list = list.filter(p => p.nome.toLowerCase().includes(term) || p.categoria.toLowerCase().includes(term));
+    list = list.filter(p => p.nome.toLowerCase().includes(term) || p.categoria.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term));
   }
 
   if (list.length === 0){
@@ -766,11 +758,11 @@ function renderProducts(filter){
 }
 
 function wireSearch(inputEl){
+  if(!inputEl) return;
   inputEl.addEventListener('input', () => {
     renderProducts(inputEl.value);
-    // mantém os dois campos de busca sincronizados (desktop / mobile)
     [document.getElementById('search-input'), document.getElementById('search-input-mobile')]
-      .forEach(el => { if (el !== inputEl) el.value = inputEl.value; });
+      .forEach(el => { if (el && el !== inputEl) el.value = inputEl.value; });
   });
 }
 wireSearch(document.getElementById('search-input'));
@@ -789,6 +781,7 @@ function saveCart(){ localStorage.setItem('saint_cart', JSON.stringify(cart)); }
 
 function addToCart(id){
   const prod = PRODUCTS.find(p => p.id === id);
+  if(!prod) return;
   const item = cart.find(i => i.id === id);
   if (item) item.qtd += 1;
   else cart.push({ id: prod.id, nome: prod.nome, preco: prod.preco, img: prod.img, qtd: 1 });
@@ -822,8 +815,10 @@ function renderCart(){
   const count = cartCount();
 
   [document.getElementById('cart-badge'), document.getElementById('cart-badge-fab')].forEach(el => {
-    el.textContent = count;
-    el.style.display = count > 0 ? 'flex' : 'none';
+    if(el){
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    }
   });
 
   if (cart.length === 0){
@@ -839,7 +834,7 @@ function renderCart(){
   footEl.style.display = 'block';
   listEl.innerHTML = cart.map(i => `
     <div class="cart-item">
-      <img src="${i.img}" alt="${i.nome}" />
+      <img src="${i.img}" alt="${i.nome}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
       <div class="cart-item-info">
         <h4>${i.nome}</h4>
         <p class="unit">${money(i.preco)} / un.</p>
@@ -891,7 +886,7 @@ function renderModalSummary(){
 
 function setFieldValid(fieldId, valid){
   const el = document.getElementById(fieldId);
-  el.classList.toggle('invalid', !valid);
+  if(el) el.classList.toggle('invalid', !valid);
 }
 
 document.getElementById('checkout-form').addEventListener('submit', (e) => {
@@ -922,7 +917,6 @@ document.getElementById('checkout-form').addEventListener('submit', (e) => {
     return;
   }
 
-  // ---- monta a mensagem do WhatsApp ----
   let msg = `*NOVO PEDIDO — SEX SHOP*\n\n`;
   msg += `*Resumo do pedido:*\n`;
   cart.forEach(i => { msg += `• ${i.qtd}x ${i.nome} — ${money(i.preco * i.qtd)}\n`; });
@@ -952,6 +946,7 @@ document.getElementById('checkout-form').addEventListener('submit', (e) => {
 let toastTimer;
 function showToast(text){
   const el = document.getElementById('toast');
+  if(!el) return;
   el.textContent = text;
   el.classList.add('show');
   clearTimeout(toastTimer);
@@ -959,12 +954,17 @@ function showToast(text){
 }
 
 /* ============================================================
-   INIT
+   INICIALIZAÇÃO DA APLICAÇÃO
    ============================================================ */
-renderFeatured();
-renderCatTabs();
-renderProducts();
-renderCart();
+function initApp(){
+  renderFeatured();
+  renderCatTabs();
+  renderProducts();
+  renderCart();
+}
+
+// Inicia o carregamento da planilha
+fetchSheetData();
 </script>
 
 </body>
