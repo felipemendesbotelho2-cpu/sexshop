@@ -591,7 +591,8 @@
         </div>
         <div class="field">
           <label for="n-categoria">Categoria</label>
-          <select id="n-categoria"></select>
+          <input id="n-categoria" type="text" list="cat-list" placeholder="Ex: Vibradores (ou digite uma nova)" />
+          <datalist id="cat-list"></datalist>
         </div>
         <div class="field">
           <label for="n-desc">Descrição</label>
@@ -697,6 +698,7 @@ async function fetchProducts(){
     PRODUCTS = [];
   }
   extractCategories();
+  fillCategoryDatalist();
   initApp();
 }
 
@@ -959,12 +961,13 @@ function initApp(){
 function escapeAttr(s){ return String(s || '').replace(/"/g, '&quot;'); }
 function escapeHTML(s){ return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-function fillCategorySelect(selectEl, selected){
-  selectEl.innerHTML = CATEGORY_ORDER.map(c =>
-    `<option value="${c}" ${c === selected ? 'selected' : ''}>${c}</option>`
-  ).join('');
+function fillCategoryDatalist(){
+  const listEl = document.getElementById('cat-list');
+  const found = [...new Set(PRODUCTS.map(p => p.categoria))].filter(Boolean);
+  const all = [...new Set([...CATEGORY_ORDER, ...found])];
+  listEl.innerHTML = all.map(c => `<option value="${c}"></option>`).join('');
 }
-fillCategorySelect(document.getElementById('n-categoria'), CATEGORY_ORDER[0]);
+fillCategoryDatalist();
 
 function checkAdminPassword(){
   const val = document.getElementById('admin-pass').value;
@@ -1014,15 +1017,12 @@ function renderAdminList(products){
 }
 
 function adminItemHTML(p){
-  const catOptions = CATEGORY_ORDER.map(c =>
-    `<option value="${c}" ${c === p.categoria ? 'selected' : ''}>${c}</option>`
-  ).join('');
   return `
   <div class="admin-item" data-id="${p.id}">
     <img class="admin-thumb" src="${p.foto_url || 'https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'}" alt="${escapeAttr(p.nome)}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
     <div class="admin-item-fields">
       <div class="field"><label>Nome</label><input type="text" class="a-nome" value="${escapeAttr(p.nome)}" /></div>
-      <div class="field"><label>Categoria</label><select class="a-categoria">${catOptions}</select></div>
+      <div class="field"><label>Categoria</label><input type="text" class="a-categoria" list="cat-list" value="${escapeAttr(p.categoria)}" /></div>
       <div class="field"><label>Descrição</label><textarea class="a-desc" rows="2">${escapeHTML(p.descricao || '')}</textarea></div>
       <div class="field-row">
         <div class="field"><label>Preço (R$)</label><input type="number" step="0.01" min="0" class="a-preco" value="${p.preco}" /></div>
@@ -1121,7 +1121,7 @@ document.getElementById('admin-new-form').addEventListener('submit', async (e) =
 
     showToast('Produto cadastrado com sucesso');
     e.target.reset();
-    fillCategorySelect(document.getElementById('n-categoria'), CATEGORY_ORDER[0]);
+    fillCategoryDatalist();
     await loadAdminList();
     await fetchProducts();
   } catch(err){
