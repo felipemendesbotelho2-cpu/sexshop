@@ -780,9 +780,27 @@ function toggleMobileSearch(){
   document.getElementById('search-mobile').classList.toggle('open');
 }
 
-let cart = JSON.parse(localStorage.getItem('saint_cart') || '[]');
+// Limpa restos de cache de uma versão antiga do site (planilha Google Sheets),
+// que podem estar ocupando espaço sem necessidade.
+try{
+  localStorage.removeItem('sexshop_products_cache');
+  localStorage.removeItem('sexshop_cache_time');
+} catch(e){ /* ignora */ }
 
-function saveCart(){ localStorage.setItem('saint_cart', JSON.stringify(cart)); }
+let cart = [];
+try{
+  cart = JSON.parse(localStorage.getItem('saint_cart') || '[]');
+} catch(e){
+  cart = [];
+}
+
+function saveCart(){
+  try{
+    localStorage.setItem('saint_cart', JSON.stringify(cart));
+  } catch(err){
+    console.warn('Não foi possível salvar o carrinho no navegador (espaço cheio). O carrinho continua funcionando nesta sessão.', err);
+  }
+}
 
 function addToCart(id){
   const prod = PRODUCTS.find(p => p.id === id);
