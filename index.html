@@ -623,6 +623,7 @@
 
     <div class="admin-block">
       <h3>Produtos cadastrados</h3>
+      <div id="admin-cat-tabs" class="cat-tabs"></div>
       <div id="admin-product-list"></div>
     </div>
   </div>
@@ -1021,23 +1022,51 @@ async function uploadFoto(file){
   return data.publicUrl;
 }
 
+let ADMIN_PRODUCTS = [];
+let activeAdminCategory = 'Todos';
+
 async function loadAdminList(){
   const wrap = document.getElementById('admin-product-list');
   wrap.innerHTML = `<p class="empty-note">Carregando produtos...</p>`;
   try{
     const { data, error } = await supabaseClient.from('produtos').select('*').order('id', { ascending: false });
     if (error) throw error;
-    renderAdminList(data || []);
+    ADMIN_PRODUCTS = data || [];
+    renderAdminCatTabs();
+    renderAdminListFiltered();
   } catch(err){
     console.error(err);
     wrap.innerHTML = `<p class="empty-note">Erro ao carregar produtos do painel.</p>`;
   }
 }
 
+function renderAdminCatTabs(){
+  const wrap = document.getElementById('admin-cat-tabs');
+  if (!wrap) return;
+  const found = [...new Set(ADMIN_PRODUCTS.map(p => p.categoria))].filter(Boolean);
+  const cats = ['Todos', ...new Set([...CATEGORY_ORDER.filter(c => found.includes(c)), ...found])];
+  wrap.innerHTML = cats.map(c => `
+    <button type="button" class="cat-tab${c === activeAdminCategory ? ' active' : ''}" onclick="selectAdminCategory('${c.replace(/'/g, "\\'")}')">${c}</button>
+  `).join('');
+}
+
+function selectAdminCategory(cat){
+  activeAdminCategory = cat;
+  renderAdminCatTabs();
+  renderAdminListFiltered();
+}
+
+function renderAdminListFiltered(){
+  const list = activeAdminCategory === 'Todos'
+    ? ADMIN_PRODUCTS
+    : ADMIN_PRODUCTS.filter(p => p.categoria === activeAdminCategory);
+  renderAdminList(list);
+}
+
 function renderAdminList(products){
   const wrap = document.getElementById('admin-product-list');
   if (!products.length){
-    wrap.innerHTML = `<p class="empty-note">Nenhum produto cadastrado ainda.</p>`;
+    wrap.innerHTML = `<p class="empty-note">${activeAdminCategory === 'Todos' ? 'Nenhum produto cadastrado ainda.' : `Nenhum produto em "${activeAdminCategory}".`}</p>`;
     return;
   }
   wrap.innerHTML = products.map(p => adminItemHTML(p)).join('');
