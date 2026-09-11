@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
   :root{
@@ -325,12 +326,13 @@
     display:block; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
     color:var(--gold); font-weight:700; margin-bottom:7px;
   }
-  .field input, .field select{
+  .field input, .field select, .field textarea{
     width:100%; background:var(--panel); border:1px solid var(--panel-line); color:var(--ivory);
     padding:11px 13px; font-size:13.5px; outline:none; border-radius:var(--radius);
+    font-family:inherit; resize:vertical;
   }
-  .field input:focus, .field select:focus{ border-color:var(--gold); }
-  .field input::placeholder{ color:var(--muted-2); }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--gold); }
+  .field input::placeholder, .field textarea::placeholder{ color:var(--muted-2); }
   .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .field-error{ font-size:10.5px; color:#e08a95; margin-top:5px; display:none; }
   .field.invalid input, .field.invalid select{ border-color:#a3213f; }
@@ -369,6 +371,29 @@
     transition:opacity .3s, transform .3s; white-space:nowrap;
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ============ PAINEL ADMIN ============ */
+  #painel{ border-top:1px solid var(--panel-line); }
+  .admin-box{
+    max-width:340px; margin:0 auto; background:var(--panel);
+    border:1px solid var(--panel-line); padding:22px; text-align:left;
+  }
+  .btn-outline{ background:transparent; border:1px solid var(--panel-line); color:var(--muted); }
+  .btn-outline:hover{ border-color:var(--wine-light); color:var(--wine-light); }
+  .admin-block{ margin-bottom:40px; }
+  .admin-block h3{ font-size:19px; color:var(--gold-soft); margin-bottom:16px; }
+  .admin-new-box{
+    background:var(--panel); border:1px solid var(--panel-line); padding:22px; max-width:520px;
+  }
+  .admin-item{
+    display:flex; gap:16px; background:var(--panel); border:1px solid var(--panel-line);
+    padding:16px; margin-bottom:14px;
+  }
+  .admin-thumb{ width:74px; height:90px; object-fit:cover; flex-shrink:0; background:var(--panel-2); }
+  .admin-item-fields{ flex:1; min-width:0; }
+  .admin-item-fields .field{ margin-bottom:10px; }
+  .admin-item-actions{ display:flex; gap:10px; margin-top:6px; }
+  @media (max-width:520px){ .admin-item{ flex-direction:column; } .admin-thumb{ width:100%; height:160px; } }
 </style>
 </head>
 <body>
@@ -425,18 +450,6 @@
 
 <section class="section" id="colecao">
   <div id="cat-tabs" class="cat-tabs"></div>
-
-  <!-- Destaques desativados por enquanto. Pra reativar, descomente o bloco abaixo
-       e a chamada de renderFeatured() no final do <script>.
-  <div id="destaques" style="margin-bottom:40px;">
-    <div class="section-head" style="margin-bottom:22px;">
-      <span class="eyebrow">Explore por estilo</span>
-      <h2 style="font-size:clamp(20px,4vw,26px);">Destaques da coleção</h2>
-    </div>
-    <div id="featured-scroll" class="cat-showcase"></div>
-  </div>
-  -->
-
   <div id="product-grid" class="grid"></div>
 </section>
 
@@ -553,32 +566,85 @@
   </div>
 </div>
 
+<section class="section" id="painel">
+  <div class="section-head">
+    <span class="eyebrow">Área restrita</span>
+    <h2 style="font-size:clamp(20px,4vw,26px);">Painel Admin</h2>
+  </div>
+
+  <div id="admin-login" class="admin-box">
+    <div class="field">
+      <label for="admin-pass">Senha</label>
+      <input id="admin-pass" type="password" placeholder="Digite a senha" />
+    </div>
+    <button type="button" class="btn btn-wine" onclick="checkAdminPassword()" style="width:100%;">Entrar</button>
+    <p id="admin-login-error" class="field-error" style="display:none; margin-top:10px;">Senha incorreta.</p>
+  </div>
+
+  <div id="admin-content" style="display:none;">
+    <div class="admin-block">
+      <h3>Cadastrar novo produto</h3>
+      <form id="admin-new-form" class="admin-new-box">
+        <div class="field">
+          <label for="n-nome">Nome do produto</label>
+          <input id="n-nome" type="text" placeholder="Nome do produto" />
+        </div>
+        <div class="field">
+          <label for="n-categoria">Categoria</label>
+          <select id="n-categoria"></select>
+        </div>
+        <div class="field">
+          <label for="n-desc">Descrição</label>
+          <textarea id="n-desc" rows="3" placeholder="Descrição do produto"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="n-preco">Preço (R$)</label>
+            <input id="n-preco" type="number" step="0.01" min="0" placeholder="0,00" />
+          </div>
+          <div class="field">
+            <label for="n-status">Status</label>
+            <select id="n-status">
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="n-foto">Foto do produto</label>
+          <input id="n-foto" type="file" accept="image/*" />
+        </div>
+        <button type="submit" class="btn btn-wine" style="width:100%;">Cadastrar Produto</button>
+      </form>
+    </div>
+
+    <div class="admin-block">
+      <h3>Produtos cadastrados</h3>
+      <div id="admin-product-list"></div>
+    </div>
+  </div>
+</section>
+
 <div class="toast" id="toast"></div>
 
 <script>
-/* ============================================================
-   CONFIGURAÇÕES E INTEGRAÇÃO GOOGLE SHEETS
-   ============================================================ */
 const WHATSAPP_NUMBER = "5563981069130";
 
-// URL de exportação CSV da planilha publicada (evita bloqueio de CORS do formato pubhtml)
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuaOt7cH03VBDepEMzXqD8888WGDsd9StzE9dR4-Hk00KoymEqmUMRWFYsAHmqgYeXED-XdgpmVgd1/pub?output=csv";
+/* ============================================================
+   SUPABASE — troque pelos dados do SEU projeto
+   ============================================================ */
+const SUPABASE_URL = "https://ycgkwdcydiuudodfhjdp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_gtjjO7T8dHNWUDMVKZ0vLw_2LTa7tDq";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Configuração de CACHE (Evita requisições excessivas e protege contra superlotação)
-const CACHE_KEY = "sexshop_products_cache";
-const CACHE_TIME_KEY = "sexshop_cache_time";
-const CACHE_DURATION_MS = 30 * 60 * 1000; // 30 minutos em milissegundos
+// Senha para acessar o painel admin no fim da página. Troque aqui.
+const ADMIN_PASSWORD = "admsexshop123";
+
+function money(v){ return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
 
 let PRODUCTS = [];
 let CATEGORIES = [];
 
-function money(v){ return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
-
-/* ============================================================
-   CATEGORIAS FIXAS (ordem de exibição)
-   A planilha pode escrever com acento/maiúscula diferente que
-   ainda assim vai casar com a categoria certa aqui embaixo.
-   ============================================================ */
 const CATEGORY_ORDER = [
   "Cosméticos Eróticos",
   "Vibradores",
@@ -594,130 +660,46 @@ function normalizeCat(str){
     .toLowerCase().trim();
 }
 
-// Se o texto vindo da planilha bater (ignorando acento/caixa) com uma
-// das categorias fixas, usa o nome "oficial" pra exibir sempre igual.
-// Se não bater com nenhuma, mantém o texto como veio da planilha.
 function canonicalCategory(rawCat){
   const found = CATEGORY_ORDER.find(c => normalizeCat(c) === normalizeCat(rawCat));
   return found || (rawCat || 'Geral');
 }
 
-/* ============================================================
-   SISTEMA DE BUSCA DA PLANILHA + CACHE ANTI-SOBRECARGA
-   ============================================================ */
-async function fetchSheetData() {
-  const cachedProducts = localStorage.getItem(CACHE_KEY);
-  const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
-  const now = Date.now();
-
-  // Verifica se o cache é válido e recente
-  if (cachedProducts && cacheTime && (now - parseInt(cacheTime)) < CACHE_DURATION_MS) {
-    PRODUCTS = JSON.parse(cachedProducts);
-    extractCategories();
-    initApp();
-    return;
-  }
-
-  try {
-    const response = await fetch(SHEET_URL);
-    if (!response.ok) throw new Error("HTTP " + response.status);
-    const csvText = await response.text();
-    const rows = parseCSV(csvText);
-
-    const fetchedProducts = [];
-    let idCounter = 1;
-
-    rows.forEach((cells, index) => {
-      // Pula o cabeçalho se houver
-      if (index === 0 && cells[0] && cells[0].toLowerCase().includes("sku")) return;
-
-      if (cells.length >= 8) {
-        const cat = canonicalCategory(cells[1] ? cells[1].trim() : "Geral");
-        const nome = cells[2] ? cells[2].trim() : "";
-        const desc = cells[3] ? cells[3].trim() : "";
-        const precoRaw = cells[5] ? cells[5].trim() : "0";
-        const img = cells[7] ? cells[7].trim() : "";
-        const status = cells[8] ? cells[8].trim().toLowerCase() : "ativo";
-
-        // Trata preço formatado em real (R$ 0,00 -> 0.00)
-        let preco = parseFloat(precoRaw.replace(/[^\d,-]/g, '').replace(',', '.'));
-        if (isNaN(preco)) preco = 0;
-
-        // Adiciona apenas produtos válidos e ativos
-        if (nome && status === "ativo") {
-          fetchedProducts.push({
-            id: idCounter++,
-            nome: nome,
-            categoria: cat,
-            preco: preco,
-            desc: desc,
-            img: img || "https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem"
-          });
-        }
-      }
-    });
-
-    if (fetchedProducts.length > 0) {
-      PRODUCTS = fetchedProducts;
-      localStorage.setItem(CACHE_KEY, JSON.stringify(PRODUCTS));
-      localStorage.setItem(CACHE_TIME_KEY, now.toString());
-    } else if (cachedProducts) {
-      // Fallback para o cache antigo caso a planilha retorne vazia
-      PRODUCTS = JSON.parse(cachedProducts);
-    }
-  } catch (error) {
-    console.error("Erro ao carregar planilha. Utilizando cache salvo:", error);
-    if (cachedProducts) {
-      PRODUCTS = JSON.parse(cachedProducts);
-    }
-  }
-
-  extractCategories();
-  initApp();
-}
-
-// Leitor simples de CSV (lida com aspas, vírgulas e quebras de linha dentro de campos)
-function parseCSV(text) {
-  const rows = [];
-  let row = [], field = '', inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const next = text[i + 1];
-
-    if (inQuotes) {
-      if (char === '"' && next === '"') { field += '"'; i++; }
-      else if (char === '"') { inQuotes = false; }
-      else { field += char; }
-    } else {
-      if (char === '"') { inQuotes = true; }
-      else if (char === ',') { row.push(field); field = ''; }
-      else if (char === '\r') { /* ignora */ }
-      else if (char === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
-      else { field += char; }
-    }
-  }
-  if (field.length || row.length) { row.push(field); rows.push(row); }
-
-  return rows.filter(r => r.some(c => c.trim() !== ''));
-}
-
 function extractCategories() {
   const found = [...new Set(PRODUCTS.map(p => p.categoria))].filter(Boolean);
-
-  // Primeiro as categorias fixas (só as que têm produto ativo na planilha),
-  // na ordem definida em CATEGORY_ORDER
   const ordered = CATEGORY_ORDER.filter(cat => found.includes(cat));
-
-  // Depois, qualquer categoria que veio da planilha e não está na lista fixa
   const extras = found.filter(cat => !CATEGORY_ORDER.includes(cat));
-
   CATEGORIES = [...ordered, ...extras];
 }
 
 /* ============================================================
-   CARD DE PRODUTO
+   CARREGAR PRODUTOS DO SUPABASE (loja pública — só ativos)
    ============================================================ */
+async function fetchProducts(){
+  try{
+    const { data, error } = await supabaseClient
+      .from('produtos')
+      .select('*')
+      .eq('status', 'ativo')
+      .order('id', { ascending: false });
+    if (error) throw error;
+
+    PRODUCTS = (data || []).map(p => ({
+      id: p.id,
+      nome: p.nome,
+      categoria: canonicalCategory(p.categoria),
+      preco: Number(p.preco) || 0,
+      desc: p.descricao || '',
+      img: p.foto_url || 'https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'
+    }));
+  } catch(err){
+    console.error('Erro ao carregar produtos do Supabase:', err);
+    PRODUCTS = [];
+  }
+  extractCategories();
+  initApp();
+}
+
 function cardHTML(p, extraClass){
   return `
     <div class="card${extraClass ? ' ' + extraClass : ''}">
@@ -739,46 +721,6 @@ function cardHTML(p, extraClass){
     </div>`;
 }
 
-/* ============================================================
-   VITRINE DE CATEGORIAS
-   ============================================================ */
-const CATEGORY_ICONS = {
-  "Cosméticos Eróticos": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
-  "Vibradores": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
-  "Dildos e Próteses": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
-  "Produtos Anal": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/>',
-  "Masturbadores Masculinos": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m-8-8h16"/>',
-  "BDSM e Fetichismo": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
-  "Lingeries e Acessórios": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5C19 15.65 12 20 12 20Z"/>',
-  "Higiene, Cuidados e Jogos": '<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 10c0-1.5 1-2.5 3-2.5s3 1.5 4 1.5 2-1.5 4-1.5 3 1 3 2.5c0 3-3 6-7 8-4-2-7-5-7-8Z"/>'
-};
-
-function renderFeatured(){
-  const wrap = document.getElementById('featured-scroll');
-  if(!wrap) return;
-  wrap.innerHTML = CATEGORIES.map(cat => {
-    const count = PRODUCTS.filter(p => p.categoria === cat).length;
-    const icon = CATEGORY_ICONS[cat] || '<path fill="none" stroke="currentColor" stroke-width="1.6" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/>';
-    return `
-      <button type="button" class="cat-tile" onclick="goToCategory('${cat.replace(/'/g, "\\'")}')">
-        <span class="cat-tile-icon"><svg viewBox="0 0 24 24">${icon}</svg></span>
-        <h3>${cat}</h3>
-        <span class="cat-count">${count} ${count === 1 ? 'item' : 'itens'}</span>
-        <span class="cat-link">Ver produtos
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
-        </span>
-      </button>`;
-  }).join('');
-}
-
-function goToCategory(cat){
-  selectCategory(cat);
-  document.getElementById('colecao').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-/* ============================================================
-   ABAS DE CATEGORIA
-   ============================================================ */
 let activeCategory = 'Todos';
 
 function renderCatTabs(){
@@ -797,9 +739,6 @@ function selectCategory(cat){
   renderProducts(searchEl ? searchEl.value : '');
 }
 
-/* ============================================================
-   RENDER PRODUTOS + BUSCA
-   ============================================================ */
 function renderProducts(filter){
   const grid = document.getElementById('product-grid');
   if(!grid) return;
@@ -836,9 +775,6 @@ function toggleMobileSearch(){
   document.getElementById('search-mobile').classList.toggle('open');
 }
 
-/* ============================================================
-   CARRINHO
-   ============================================================ */
 let cart = JSON.parse(localStorage.getItem('saint_cart') || '[]');
 
 function saveCart(){ localStorage.setItem('saint_cart', JSON.stringify(cart)); }
@@ -928,9 +864,6 @@ function closeCart(){
   document.getElementById('overlay-cart').classList.remove('show');
 }
 
-/* ============================================================
-   CHECKOUT
-   ============================================================ */
 function openCheckout(){
   if (cart.length === 0) return;
   renderModalSummary();
@@ -1004,9 +937,6 @@ document.getElementById('checkout-form').addEventListener('submit', (e) => {
   closeCheckout();
 });
 
-/* ============================================================
-   TOAST
-   ============================================================ */
 let toastTimer;
 function showToast(text){
   const el = document.getElementById('toast');
@@ -1017,18 +947,196 @@ function showToast(text){
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-/* ============================================================
-   INICIALIZAÇÃO DA APLICAÇÃO
-   ============================================================ */
 function initApp(){
-  // renderFeatured(); // destaques desativados por enquanto
   renderCatTabs();
   renderProducts();
   renderCart();
 }
 
-// Inicia o carregamento da planilha
-fetchSheetData();
+/* ============================================================
+   PAINEL ADMIN
+   ============================================================ */
+function escapeAttr(s){ return String(s || '').replace(/"/g, '&quot;'); }
+function escapeHTML(s){ return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+function fillCategorySelect(selectEl, selected){
+  selectEl.innerHTML = CATEGORY_ORDER.map(c =>
+    `<option value="${c}" ${c === selected ? 'selected' : ''}>${c}</option>`
+  ).join('');
+}
+fillCategorySelect(document.getElementById('n-categoria'), CATEGORY_ORDER[0]);
+
+function checkAdminPassword(){
+  const val = document.getElementById('admin-pass').value;
+  const errEl = document.getElementById('admin-login-error');
+  if (val === ADMIN_PASSWORD){
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    errEl.style.display = 'none';
+    loadAdminList();
+  } else {
+    errEl.style.display = 'block';
+  }
+}
+document.getElementById('admin-pass').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkAdminPassword();
+});
+
+async function uploadFoto(file){
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = `produtos/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await supabaseClient.storage.from('produtos-fotos').upload(path, file, { upsert: true });
+  if (error) throw error;
+  const { data } = supabaseClient.storage.from('produtos-fotos').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function loadAdminList(){
+  const wrap = document.getElementById('admin-product-list');
+  wrap.innerHTML = `<p class="empty-note">Carregando produtos...</p>`;
+  try{
+    const { data, error } = await supabaseClient.from('produtos').select('*').order('id', { ascending: false });
+    if (error) throw error;
+    renderAdminList(data || []);
+  } catch(err){
+    console.error(err);
+    wrap.innerHTML = `<p class="empty-note">Erro ao carregar produtos do painel.</p>`;
+  }
+}
+
+function renderAdminList(products){
+  const wrap = document.getElementById('admin-product-list');
+  if (!products.length){
+    wrap.innerHTML = `<p class="empty-note">Nenhum produto cadastrado ainda.</p>`;
+    return;
+  }
+  wrap.innerHTML = products.map(p => adminItemHTML(p)).join('');
+}
+
+function adminItemHTML(p){
+  const catOptions = CATEGORY_ORDER.map(c =>
+    `<option value="${c}" ${c === p.categoria ? 'selected' : ''}>${c}</option>`
+  ).join('');
+  return `
+  <div class="admin-item" data-id="${p.id}">
+    <img class="admin-thumb" src="${p.foto_url || 'https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'}" alt="${escapeAttr(p.nome)}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
+    <div class="admin-item-fields">
+      <div class="field"><label>Nome</label><input type="text" class="a-nome" value="${escapeAttr(p.nome)}" /></div>
+      <div class="field"><label>Categoria</label><select class="a-categoria">${catOptions}</select></div>
+      <div class="field"><label>Descrição</label><textarea class="a-desc" rows="2">${escapeHTML(p.descricao || '')}</textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Preço (R$)</label><input type="number" step="0.01" min="0" class="a-preco" value="${p.preco}" /></div>
+        <div class="field"><label>Status</label>
+          <select class="a-status">
+            <option value="ativo" ${p.status === 'ativo' ? 'selected' : ''}>Ativo</option>
+            <option value="inativo" ${p.status === 'inativo' ? 'selected' : ''}>Inativo</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Trocar foto (opcional)</label><input type="file" accept="image/*" class="a-foto" /></div>
+      <div class="admin-item-actions">
+        <button type="button" class="btn btn-wine" onclick="saveAdminProduct(${p.id}, this)">Salvar</button>
+        <button type="button" class="btn btn-outline" onclick="deleteAdminProduct(${p.id})">Excluir</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function saveAdminProduct(id, btn){
+  const item = btn.closest('.admin-item');
+  const nome = item.querySelector('.a-nome').value.trim();
+  const categoria = item.querySelector('.a-categoria').value;
+  const descricao = item.querySelector('.a-desc').value.trim();
+  const preco = parseFloat(item.querySelector('.a-preco').value) || 0;
+  const status = item.querySelector('.a-status').value;
+  const file = item.querySelector('.a-foto').files[0];
+
+  if (!nome){
+    showToast('Informe o nome do produto');
+    return;
+  }
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
+  try{
+    const updateData = { nome, categoria, descricao, preco, status };
+    if (file) updateData.foto_url = await uploadFoto(file);
+
+    const { error } = await supabaseClient.from('produtos').update(updateData).eq('id', id);
+    if (error) throw error;
+
+    showToast('Produto atualizado');
+    await loadAdminList();
+    await fetchProducts();
+  } catch(err){
+    console.error(err);
+    showToast('Erro ao salvar. Tente novamente.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+async function deleteAdminProduct(id){
+  if (!confirm('Excluir este produto definitivamente?')) return;
+  try{
+    const { error } = await supabaseClient.from('produtos').delete().eq('id', id);
+    if (error) throw error;
+    showToast('Produto excluído');
+    await loadAdminList();
+    await fetchProducts();
+  } catch(err){
+    console.error(err);
+    showToast('Erro ao excluir produto');
+  }
+}
+
+document.getElementById('admin-new-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nome = document.getElementById('n-nome').value.trim();
+  const categoria = document.getElementById('n-categoria').value;
+  const descricao = document.getElementById('n-desc').value.trim();
+  const preco = parseFloat(document.getElementById('n-preco').value) || 0;
+  const status = document.getElementById('n-status').value;
+  const file = document.getElementById('n-foto').files[0];
+
+  if (!nome){
+    showToast('Informe o nome do produto');
+    return;
+  }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Cadastrando...';
+
+  try{
+    let foto_url = null;
+    if (file) foto_url = await uploadFoto(file);
+
+    const { error } = await supabaseClient.from('produtos').insert([{ nome, categoria, descricao, preco, status, foto_url }]);
+    if (error) throw error;
+
+    showToast('Produto cadastrado com sucesso');
+    e.target.reset();
+    fillCategorySelect(document.getElementById('n-categoria'), CATEGORY_ORDER[0]);
+    await loadAdminList();
+    await fetchProducts();
+  } catch(err){
+    console.error(err);
+    showToast('Erro ao cadastrar produto');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+});
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+fetchProducts();
 </script>
 
 </body>
