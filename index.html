@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Saint Shop | Elegância Discreta</title>
-<meta name="description" content="Saint Shop — lingeries em renda fina, cosméticos e acessórios premium, com entrega 100% discreta." />
+<title>Saint Palmas | Elegância Discreta</title>
+<meta name="description" content="Saint Palmas — lingeries em renda fina, cosméticos e acessórios premium, com entrega 100% discreta." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -134,11 +134,11 @@
     background:var(--panel-line); border-top:1px solid var(--panel-line); border-bottom:1px solid var(--panel-line);
   }
   .trust > div{
-    background:var(--void); padding:20px 12px; text-align:center;
+    background:var(--void); padding:9px 8px; text-align:center;
   }
-  .trust svg{ width:20px; height:20px; color:var(--gold); margin:0 auto 10px; }
-  .trust p{ font-size:11px; letter-spacing:.03em; color:var(--muted); line-height:1.4; }
-  .trust strong{ display:block; color:var(--ivory); font-size:12.5px; font-weight:700; margin-bottom:3px; }
+  .trust svg{ width:14px; height:14px; color:var(--gold); margin:0 auto 4px; }
+  .trust p{ font-size:8.5px; letter-spacing:.02em; color:var(--muted); line-height:1.25; }
+  .trust strong{ display:block; color:var(--ivory); font-size:10.5px; font-weight:700; margin-bottom:2px; }
 
   .section{ padding:56px 20px; max-width:1180px; margin:0 auto; }
   .section-head{ text-align:center; margin-bottom:36px; }
@@ -167,18 +167,24 @@
   }
   .hl-slide{
     flex:0 0 100%; position:relative; cursor:pointer;
-    aspect-ratio:16/9; overflow:hidden;
+    aspect-ratio:4/5; overflow:hidden;
   }
-  @media (min-width:720px){ .hl-slide{ aspect-ratio:21/8; } }
-  .hl-slide-img{ position:absolute; inset:0; background:var(--panel-2); }
-  .hl-slide-img img{ width:100%; height:100%; object-fit:cover; }
-  .hl-slide-img::after{
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(0deg, rgba(10,3,4,0.88) 0%, rgba(10,3,4,0.35) 45%, transparent 72%);
+  @media (min-width:720px){ .hl-slide{ aspect-ratio:16/10; } }
+  .hl-slide-bg{
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    filter:blur(22px) brightness(.45) saturate(1.1);
+    transform:scale(1.2);
+  }
+  .hl-slide-img{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .hl-slide-img img{ width:100%; height:100%; object-fit:contain; }
+  .hl-slide-overlay{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(0deg, rgba(10,3,4,0.92) 0%, rgba(10,3,4,0.55) 32%, rgba(10,3,4,0.05) 60%, transparent 78%);
   }
   .hl-slide-info{
     position:absolute; left:0; right:0; bottom:0; z-index:1;
-    padding:14px 16px; display:flex; flex-direction:column; gap:4px;
+    padding:16px 16px; display:flex; flex-direction:column; gap:4px;
   }
   .hl-tag{
     align-self:flex-start; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
@@ -186,8 +192,12 @@
     background:rgba(10,3,4,0.5); margin-bottom:2px;
   }
   .hl-slide-info h3{ font-size:clamp(15px,3vw,19px); color:var(--ivory); line-height:1.2; }
-  .hl-slide-info p{ display:none; }
-  .hl-slide-foot{ display:flex; align-items:center; gap:16px; margin-top:2px; }
+  .hl-slide-info p{
+    font-size:12px; color:var(--muted); line-height:1.4; margin-top:2px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    max-width:520px;
+  }
+  .hl-slide-foot{ display:flex; align-items:center; gap:16px; margin-top:4px; }
   .hl-price{ font-family:'Cormorant Garamond',serif; font-size:19px; color:var(--gold-soft); font-weight:600; }
 
   .highlights-dots{
@@ -318,6 +328,17 @@
   }
   .fab-top.show{ opacity:1; pointer-events:auto; transform:translateY(0); }
   .fab-top svg{ width:20px; height:20px; color:var(--gold-soft); }
+
+  .fab-top-label{
+    position:fixed; bottom:32px; left:76px; z-index:45;
+    background:var(--panel); border:1px solid var(--gold); color:var(--ivory);
+    font-size:11px; font-weight:600; letter-spacing:.02em;
+    padding:6px 12px; border-radius:999px; white-space:nowrap;
+    box-shadow:0 8px 18px -6px rgba(0,0,0,0.5);
+    opacity:0; pointer-events:none; transform:translateX(-8px);
+    transition:opacity .25s, transform .25s;
+  }
+  .fab-top-label.show{ opacity:1; transform:translateX(0); }
 
   .overlay{
     position:fixed; inset:0; background:rgba(6,5,6,0.7); z-index:60;
@@ -504,6 +525,26 @@
   .destaque-toggle span{ font-size:11px; letter-spacing:.04em; text-transform:uppercase; font-weight:700; color:var(--muted); }
   .destaque-counter{ font-size:11.5px; color:var(--muted); margin-bottom:14px; }
   .destaque-counter b{ color:var(--gold-soft); }
+
+  .period-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .period-tab{
+    padding:9px 18px; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+    font-weight:700; color:var(--muted); border:1px solid var(--panel-line); border-radius:999px;
+    white-space:nowrap; transition:border-color .2s, color .2s, background .2s;
+  }
+  .period-tab:hover{ border-color:var(--gold); color:var(--ivory); }
+  .period-tab.active{ background:var(--wine); border-color:var(--wine); color:#fff; }
+
+  .stat-cards{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:22px; }
+  .stat-card{ background:var(--panel); border:1px solid var(--panel-line); padding:16px 20px; flex:1; min-width:150px; }
+  .stat-card .stat-label{ font-size:9.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; margin-bottom:6px; }
+  .stat-card .stat-value{ font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold-soft); font-weight:600; }
+
+  .venda-item{ display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--panel-line); padding:12px 16px; margin-bottom:8px; flex-wrap:wrap; }
+  .venda-item .venda-info{ flex:1; min-width:140px; }
+  .venda-item .venda-info h4{ font-size:13.5px; color:var(--ivory); font-weight:600; margin-bottom:2px; }
+  .venda-item .venda-info span{ font-size:11px; color:var(--muted); }
+  .venda-item .venda-valor{ font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--gold-soft); font-weight:600; white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -512,7 +553,7 @@
   <div class="header-inner">
     <a href="#topo" class="brand">
       <div class="seal-mark">S</div>
-      <div class="brand-name"><b>Saint</b> Shop<span>Elegância &amp; Discrição</span></div>
+      <div class="brand-name"><b>Saint</b> Palmas<span>Elegância &amp; Discrição</span></div>
     </a>
 
     <div class="search-wrap">
@@ -591,9 +632,9 @@
 
 <footer>
   <div class="seal-mark">S</div>
-  <p><strong style="color:var(--gold-soft);">Saint Shop</strong></p>
+  <p><strong style="color:var(--gold-soft);">Saint Palmas</strong></p>
   <p>Discrição do primeiro clique até a porta da sua casa.</p>
-  <p class="fine">&copy; 2026 Saint Shop. Todos os direitos reservados. Produtos destinados a maiores de 18 anos.</p>
+  <p class="fine">&copy; 2026 Saint Palmas. Todos os direitos reservados. Produtos destinados a maiores de 18 anos.</p>
 </footer>
 
 <button class="fab-cart" onclick="openCart()" aria-label="Abrir carrinho">
@@ -604,6 +645,7 @@
 <button class="fab-top" id="fab-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Voltar ao topo">
   <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
 </button>
+<span class="fab-top-label" id="fab-top-label">Ir até o topo</span>
 
 <div id="overlay-cart" class="overlay" onclick="closeCart()"></div>
 <div id="overlay-modal" class="overlay" onclick="closeCheckout()"></div>
@@ -723,6 +765,7 @@
     <div class="admin-tabs">
       <button type="button" class="admin-tab-btn active" data-tab="cadastro" onclick="switchAdminTab('cadastro')">Cadastro</button>
       <button type="button" class="admin-tab-btn" data-tab="destaques" onclick="switchAdminTab('destaques')">Destaques</button>
+      <button type="button" class="admin-tab-btn" data-tab="painel" onclick="switchAdminTab('painel')">Painel</button>
     </div>
 
     <div class="admin-tab-panel active" id="admin-tab-cadastro">
@@ -781,6 +824,42 @@
         <h3>Gerenciar Destaques</h3>
         <p class="destaque-counter">Selecionados: <b id="destaque-count">0</b> de 8 (máximo exibido no slide)</p>
         <div id="destaque-manager-list"></div>
+      </div>
+    </div>
+
+    <div class="admin-tab-panel" id="admin-tab-painel">
+      <div class="admin-block">
+        <h3>Registrar Venda</h3>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:16px; margin-top:-8px;">Use aqui para anotar vendas feitas fora do site (presencial, WhatsApp, etc).</p>
+        <form id="venda-form" class="admin-new-box">
+          <div class="field">
+            <label for="v-produto">Produto vendido</label>
+            <select id="v-produto"></select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="v-qtd">Quantidade</label>
+              <input id="v-qtd" type="number" min="1" step="1" value="1" />
+            </div>
+            <div class="field">
+              <label for="v-total">Total da venda</label>
+              <input id="v-total" type="text" disabled />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-wine" style="width:100%;">Confirmar Venda</button>
+        </form>
+      </div>
+
+      <div class="admin-block">
+        <h3>Faturamento</h3>
+        <div class="period-tabs" id="period-tabs">
+          <button type="button" class="period-tab active" data-period="dia" onclick="selectPeriod('dia')">Dia</button>
+          <button type="button" class="period-tab" data-period="semana" onclick="selectPeriod('semana')">Semana</button>
+          <button type="button" class="period-tab" data-period="mes" onclick="selectPeriod('mes')">Mês</button>
+          <button type="button" class="period-tab" data-period="ano" onclick="selectPeriod('ano')">Ano</button>
+        </div>
+        <div id="faturamento-summary"></div>
+        <div id="vendas-list"></div>
       </div>
     </div>
   </div>
@@ -963,12 +1042,15 @@ function buildHighlights(){
 
   track.innerHTML = hlSlides.map(p => `
     <div class="hl-slide" onclick="hlGoToProduct(${p.id})">
+      <div class="hl-slide-bg" style="background-image:url('${p.img}')"></div>
       <div class="hl-slide-img">
         <img src="${p.img}" alt="${p.nome}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
       </div>
+      <div class="hl-slide-overlay"></div>
       <div class="hl-slide-info">
         <span class="hl-tag">Destaque</span>
         <h3>${p.nome}</h3>
+        ${p.desc ? `<p>${p.desc}</p>` : ''}
         <div class="hl-slide-foot">
           <span class="hl-price">${money(p.preco)}</span>
         </div>
@@ -1191,7 +1273,7 @@ document.getElementById('checkout-form').addEventListener('submit', (e) => {
     return;
   }
 
-  let msg = `*NOVO PEDIDO — SAINT SHOP*\n\n`;
+  let msg = `*NOVO PEDIDO — SAINT PALMAS*\n\n`;
   msg += `*Resumo do pedido:*\n`;
   cart.forEach(i => { msg += `• ${i.qtd}x ${i.nome} — ${money(i.preco * i.qtd)}\n`; });
   msg += `\n*Valor total: ${money(cartTotal())}*\n\n`;
@@ -1228,9 +1310,12 @@ function showToast(text){
    BOTÃO VOLTAR AO TOPO
    ============================================================ */
 const fabTopEl = document.getElementById('fab-top');
+const fabTopLabelEl = document.getElementById('fab-top-label');
 function updateFabTop(){
   if (!fabTopEl) return;
-  fabTopEl.classList.toggle('show', window.scrollY > 400);
+  const show = window.scrollY > 400;
+  fabTopEl.classList.toggle('show', show);
+  if (fabTopLabelEl) fabTopLabelEl.classList.toggle('show', show);
 }
 window.addEventListener('scroll', updateFabTop);
 updateFabTop();
@@ -1285,7 +1370,9 @@ function switchAdminTab(tab){
   document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.getElementById('admin-tab-cadastro').classList.toggle('active', tab === 'cadastro');
   document.getElementById('admin-tab-destaques').classList.toggle('active', tab === 'destaques');
+  document.getElementById('admin-tab-painel').classList.toggle('active', tab === 'painel');
   if (tab === 'destaques') renderDestaqueManager();
+  if (tab === 'painel'){ renderVendaProdutoSelect(); renderFaturamento(); }
 }
 
 function checkAdminPassword(){
@@ -1296,6 +1383,7 @@ function checkAdminPassword(){
     document.getElementById('admin-content').style.display = 'block';
     errEl.style.display = 'none';
     loadAdminList();
+    loadVendas();
   } else {
     errEl.style.display = 'block';
   }
@@ -1325,6 +1413,7 @@ async function loadAdminList(){
     ADMIN_PRODUCTS = data || [];
     renderAdminCatTabs();
     renderAdminListFiltered();
+    renderVendaProdutoSelect();
     const destaquesTabOpen = document.getElementById('admin-tab-destaques').classList.contains('active');
     if (destaquesTabOpen) renderDestaqueManager();
   } catch(err){
@@ -1410,6 +1499,182 @@ function renderAdminCatTabs(){
   wrap.innerHTML = cats.map(c => `
     <button type="button" class="cat-tab${c === activeAdminCategory ? ' active' : ''}" onclick="selectAdminCategory('${c.replace(/'/g, "\\'")}')">${c}</button>
   `).join('');
+}
+
+/* ============================================================
+   PAINEL — REGISTRO DE VENDAS E FATURAMENTO
+   ============================================================ */
+let VENDAS = [];
+let activePeriod = 'dia';
+
+async function loadVendas(){
+  try{
+    const { data, error } = await supabaseClient.from('vendas').select('*').order('criado_em', { ascending: false });
+    if (error) throw error;
+    VENDAS = data || [];
+  } catch(err){
+    console.error('Erro ao carregar vendas (verifique se a tabela "vendas" existe no Supabase):', err);
+    VENDAS = [];
+  }
+  renderVendaProdutoSelect();
+  renderFaturamento();
+}
+
+function renderVendaProdutoSelect(){
+  const sel = document.getElementById('v-produto');
+  if (!sel) return;
+  const curValue = sel.value;
+  const source = ADMIN_PRODUCTS.length ? ADMIN_PRODUCTS : PRODUCTS;
+  if (!source.length){
+    sel.innerHTML = `<option value="">Nenhum produto cadastrado</option>`;
+    updateVendaTotal();
+    return;
+  }
+  sel.innerHTML = source.map(p => `<option value="${p.id}" data-preco="${p.preco}" data-nome="${escapeAttr(p.nome)}">${escapeHTML(p.nome)} — ${money(Number(p.preco) || 0)}</option>`).join('');
+  if (curValue && source.some(p => String(p.id) === curValue)) sel.value = curValue;
+  updateVendaTotal();
+}
+
+function updateVendaTotal(){
+  const sel = document.getElementById('v-produto');
+  const qtdEl = document.getElementById('v-qtd');
+  const totalEl = document.getElementById('v-total');
+  if (!sel || !qtdEl || !totalEl) return;
+  const opt = sel.options[sel.selectedIndex];
+  const preco = opt ? parseFloat(opt.dataset.preco) || 0 : 0;
+  const qtd = parseInt(qtdEl.value) || 0;
+  totalEl.value = money(preco * qtd);
+}
+
+const vendaProdutoEl = document.getElementById('v-produto');
+const vendaQtdEl = document.getElementById('v-qtd');
+if (vendaProdutoEl) vendaProdutoEl.addEventListener('change', updateVendaTotal);
+if (vendaQtdEl) vendaQtdEl.addEventListener('input', updateVendaTotal);
+
+document.getElementById('venda-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const sel = document.getElementById('v-produto');
+  const qtdEl = document.getElementById('v-qtd');
+  const opt = sel.options[sel.selectedIndex];
+
+  if (!opt || !sel.value){
+    showToast('Cadastre um produto antes de registrar uma venda');
+    return;
+  }
+  const quantidade = parseInt(qtdEl.value) || 0;
+  if (quantidade <= 0){
+    showToast('Informe uma quantidade válida');
+    return;
+  }
+
+  const produto_id = parseInt(sel.value);
+  const produto_nome = opt.dataset.nome;
+  const preco_unitario = parseFloat(opt.dataset.preco) || 0;
+  const valor_total = preco_unitario * quantidade;
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Registrando...';
+
+  try{
+    const { error } = await supabaseClient.from('vendas').insert([{ produto_id, produto_nome, quantidade, preco_unitario, valor_total }]);
+    if (error) throw error;
+    showToast('Venda registrada com sucesso');
+    qtdEl.value = 1;
+    updateVendaTotal();
+    await loadVendas();
+  } catch(err){
+    console.error(err);
+    showToast('Erro ao registrar venda. Verifique se a tabela "vendas" existe no Supabase.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+});
+
+function selectPeriod(period){
+  activePeriod = period;
+  document.querySelectorAll('.period-tab').forEach(b => b.classList.toggle('active', b.dataset.period === period));
+  renderFaturamento();
+}
+
+function startOfPeriod(period){
+  const now = new Date();
+  if (period === 'dia'){
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+  if (period === 'semana'){
+    const day = now.getDay();
+    const diffToMonday = (day === 0 ? -6 : 1) - day;
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMonday);
+  }
+  if (period === 'mes'){
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+  if (period === 'ano'){
+    return new Date(now.getFullYear(), 0, 1);
+  }
+  return new Date(0);
+}
+
+function renderFaturamento(){
+  const summaryEl = document.getElementById('faturamento-summary');
+  const listEl = document.getElementById('vendas-list');
+  if (!summaryEl || !listEl) return;
+
+  const start = startOfPeriod(activePeriod);
+  const filtered = VENDAS.filter(v => new Date(v.criado_em) >= start);
+  const total = filtered.reduce((s, v) => s + (Number(v.valor_total) || 0), 0);
+  const qtdVendas = filtered.length;
+  const itensVendidos = filtered.reduce((s, v) => s + (Number(v.quantidade) || 0), 0);
+
+  const labels = { dia: 'Hoje', semana: 'Esta semana', mes: 'Este mês', ano: 'Este ano' };
+
+  summaryEl.innerHTML = `
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-label">Faturamento · ${labels[activePeriod]}</div>
+        <div class="stat-value">${money(total)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Vendas registradas</div>
+        <div class="stat-value">${qtdVendas}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Itens vendidos</div>
+        <div class="stat-value">${itensVendidos}</div>
+      </div>
+    </div>`;
+
+  if (filtered.length === 0){
+    listEl.innerHTML = `<p class="empty-note">Nenhuma venda registrada nesse período.</p>`;
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(v => `
+    <div class="venda-item">
+      <div class="venda-info">
+        <h4>${v.quantidade}x ${escapeHTML(v.produto_nome)}</h4>
+        <span>${new Date(v.criado_em).toLocaleString('pt-BR')}</span>
+      </div>
+      <span class="venda-valor">${money(Number(v.valor_total) || 0)}</span>
+      <button type="button" class="remove-btn" onclick="deleteVenda(${v.id})">Remover</button>
+    </div>
+  `).join('');
+}
+
+async function deleteVenda(id){
+  if (!confirm('Remover este registro de venda?')) return;
+  try{
+    const { error } = await supabaseClient.from('vendas').delete().eq('id', id);
+    if (error) throw error;
+    showToast('Venda removida');
+    await loadVendas();
+  } catch(err){
+    console.error(err);
+    showToast('Erro ao remover venda');
+  }
 }
 
 function selectAdminCategory(cat){
