@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 
 <style>
   :root{
@@ -545,6 +546,8 @@
   .venda-item .venda-info h4{ font-size:13.5px; color:var(--ivory); font-weight:600; margin-bottom:2px; }
   .venda-item .venda-info span{ font-size:11px; color:var(--muted); }
   .venda-item .venda-valor{ font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--gold-soft); font-weight:600; white-space:nowrap; }
+
+  .chart-wrap{ background:var(--panel); border:1px solid var(--panel-line); padding:16px 12px; margin-bottom:22px; }
 </style>
 </head>
 <body>
@@ -859,6 +862,9 @@
           <button type="button" class="period-tab" data-period="ano" onclick="selectPeriod('ano')">Ano</button>
         </div>
         <div id="faturamento-summary"></div>
+        <div class="chart-wrap">
+          <canvas id="fat-chart" height="220"></canvas>
+        </div>
         <div id="vendas-list"></div>
       </div>
     </div>
@@ -1647,6 +1653,8 @@ function renderFaturamento(){
       </div>
     </div>`;
 
+  renderEvolutionChart();
+
   if (filtered.length === 0){
     listEl.innerHTML = `<p class="empty-note">Nenhuma venda registrada nesse período.</p>`;
     return;
@@ -1662,6 +1670,103 @@ function renderFaturamento(){
       <button type="button" class="remove-btn" onclick="deleteVenda(${v.id})">Remover</button>
     </div>
   `).join('');
+}
+
+function buildEvolutionData(period){
+  const now = new Date();
+
+  if (period === 'dia'){
+    const start = startOfPeriod('dia');
+    const labels = Array.from({ length: 24 }, (_, h) => `${h}h`);
+    const values = new Array(24).fill(0);
+    VENDAS.forEach(v => {
+      const d = new Date(v.criado_em);
+      if (d >= start) values[d.getHours()] += Number(v.valor_total) || 0;
+    });
+    return { labels, values };
+  }
+
+  if (period === 'semana'){
+    const start = startOfPeriod('semana');
+    const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    const values = new Array(7).fill(0);
+    VENDAS.forEach(v => {
+      const d = new Date(v.criado_em);
+      if (d >= start){
+        const diffDays = Math.floor((d - start) / 86400000);
+        if (diffDays >= 0 && diffDays < 7) values[diffDays] += Number(v.valor_total) || 0;
+      }
+    });
+    return { labels, values };
+  }
+
+  if (period === 'mes'){
+    const start = startOfPeriod('mes');
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const labels = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
+    const values = new Array(daysInMonth).fill(0);
+    VENDAS.forEach(v => {
+      const d = new Date(v.criado_em);
+      if (d >= start){
+        const dayIdx = d.getDate() - 1;
+        if (dayIdx >= 0 && dayIdx < daysInMonth) values[dayIdx] += Number(v.valor_total) || 0;
+      }
+    });
+    return { labels, values };
+  }
+
+  if (period === 'ano'){
+    const start = startOfPeriod('ano');
+    const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const values = new Array(12).fill(0);
+    VENDAS.forEach(v => {
+      const d = new Date(v.criado_em);
+      if (d >= start) values[d.getMonth()] += Number(v.valor_total) || 0;
+    });
+    return { labels, values };
+  }
+
+  return { labels: [], values: [] };
+}
+
+let fatChart = null;
+function renderEvolutionChart(){
+  const canvas = document.getElementById('fat-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  const { labels, values } = buildEvolutionData(activePeriod);
+
+  if (fatChart){ fatChart.destroy(); fatChart = null; }
+
+  fatChart = new Chart(canvas.getContext('2d'), {
+    type: (activePeriod === 'dia' || activePeriod === 'semana') ? 'bar' : 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Faturamento',
+        data: values,
+        backgroundColor: 'rgba(201,162,74,0.35)',
+        borderColor: '#c9a24a',
+        borderWidth: 2,
+        pointBackgroundColor: '#c9a24a',
+        pointRadius: 2.5,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => money(ctx.parsed.y) } }
+      },
+      scales: {
+        x: { ticks: { color: '#c9a3a3', font: { size: 10 }, maxRotation: 0 }, grid: { color: 'rgba(201,162,74,0.08)' } },
+        y: { ticks: { color: '#c9a3a3', font: { size: 10 }, callback: (v) => money(v) }, grid: { color: 'rgba(201,162,74,0.08)' }, beginAtZero: true }
+      }
+    }
+  });
 }
 
 async function deleteVenda(id){
