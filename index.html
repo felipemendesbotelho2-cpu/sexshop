@@ -143,6 +143,78 @@
   .section{ padding:56px 20px; max-width:1180px; margin:0 auto; }
   .section-head{ text-align:center; margin-bottom:36px; }
 
+  /* ============ SLIDER DE DESTAQUES ============ */
+  .highlights-wrap{ padding:40px 20px 8px; max-width:1180px; margin:0 auto; }
+  .highlights-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:12px; }
+  .highlights-head h2{ font-size:clamp(20px,4vw,26px); color:var(--ivory); }
+  .highlights-nav{ display:flex; gap:8px; }
+  .hl-nav-btn{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--panel-line);
+    display:flex; align-items:center; justify-content:center; color:var(--gold-soft);
+    transition:border-color .2s, background .2s;
+  }
+  .hl-nav-btn:hover{ border-color:var(--gold); background:rgba(201,162,74,0.08); }
+  .hl-nav-btn svg{ width:16px; height:16px; }
+
+  .highlights-slider{
+    position:relative; overflow:hidden; border-radius:4px;
+    border:1px solid var(--panel-line);
+    background:var(--panel);
+  }
+  .highlights-track{
+    display:flex; transition:transform .5s ease;
+    will-change:transform;
+  }
+  .hl-slide{
+    flex:0 0 100%; position:relative; display:grid; grid-template-columns:1fr;
+    min-height:260px; cursor:pointer;
+  }
+  @media (min-width:720px){
+    .hl-slide{ grid-template-columns: 1.1fr 1fr; min-height:320px; }
+  }
+  .hl-slide-img{ position:relative; overflow:hidden; background:var(--panel-2); order:2; }
+  @media (min-width:720px){ .hl-slide-img{ order:2; } }
+  .hl-slide-img img{ width:100%; height:100%; object-fit:cover; min-height:220px; }
+  .hl-slide-img::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, var(--panel) 0%, transparent 18%);
+    display:none;
+  }
+  @media (min-width:720px){ .hl-slide-img::after{ display:block; } }
+  .hl-slide-info{
+    order:1; padding:26px 24px; display:flex; flex-direction:column; justify-content:center;
+    gap:12px; position:relative; z-index:1;
+  }
+  .hl-tag{
+    align-self:flex-start; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+    font-weight:700; color:var(--gold); border:1px solid var(--gold); padding:5px 12px;
+  }
+  .hl-slide-info h3{ font-size:clamp(22px,3.4vw,30px); color:var(--ivory); line-height:1.2; }
+  .hl-slide-info p{ font-size:13px; color:var(--muted); line-height:1.5; max-width:420px; }
+  .hl-slide-foot{ display:flex; align-items:center; gap:16px; margin-top:4px; }
+  .hl-price{ font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold-soft); font-weight:600; }
+
+  .highlights-dots{
+    display:flex; justify-content:center; gap:7px; padding:16px 0 2px;
+  }
+  .hl-dot{
+    width:7px; height:7px; border-radius:50%; background:var(--panel-line);
+    transition:background .25s, transform .25s;
+  }
+  .hl-dot.active{ background:var(--gold); transform:scale(1.25); }
+
+  .highlights-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+    width:38px; height:38px; border-radius:50%; background:rgba(23,6,8,0.72);
+    border:1px solid var(--panel-line); display:flex; align-items:center; justify-content:center;
+    color:var(--gold-soft); backdrop-filter:blur(4px); transition:border-color .2s, background .2s;
+  }
+  .highlights-arrow:hover{ border-color:var(--gold); background:rgba(23,6,8,0.9); }
+  .highlights-arrow svg{ width:16px; height:16px; }
+  .highlights-arrow.prev{ left:12px; }
+  .highlights-arrow.next{ right:12px; }
+  @media (max-width:480px){ .highlights-arrow{ display:none; } }
+
   .cat-showcase{
     max-width:1180px; margin:0 auto;
     display:grid; grid-template-columns:repeat(2,1fr); gap:14px;
@@ -405,7 +477,36 @@
   .admin-item-fields{ flex:1; min-width:0; }
   .admin-item-fields .field{ margin-bottom:10px; }
   .admin-item-actions{ display:flex; gap:10px; margin-top:6px; }
+  .admin-checkbox-row{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .admin-checkbox-row input{ accent-color:var(--gold); width:16px; height:16px; }
+  .admin-checkbox-row label{ font-size:12px; color:var(--ivory); text-transform:none; letter-spacing:0; font-weight:600; margin:0; }
   @media (max-width:520px){ .admin-item{ flex-direction:column; } .admin-thumb{ width:100%; height:160px; } }
+
+  .admin-tabs{ display:flex; gap:8px; margin-bottom:28px; border-bottom:1px solid var(--panel-line); }
+  .admin-tab-btn{
+    padding:11px 20px; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    font-weight:700; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-1px;
+    transition:color .2s, border-color .2s;
+  }
+  .admin-tab-btn:hover{ color:var(--ivory); }
+  .admin-tab-btn.active{ color:var(--gold-soft); border-color:var(--gold); }
+  .admin-tab-panel{ display:none; }
+  .admin-tab-panel.active{ display:block; }
+
+  .destaque-item{
+    display:flex; align-items:center; gap:14px; background:var(--panel); border:1px solid var(--panel-line);
+    padding:12px 16px; margin-bottom:10px; transition:border-color .2s;
+  }
+  .destaque-item.is-active{ border-color:var(--gold); }
+  .destaque-thumb{ width:48px; height:58px; object-fit:cover; flex-shrink:0; background:var(--panel-2); }
+  .destaque-info{ flex:1; min-width:0; }
+  .destaque-info h4{ font-size:14px; color:var(--ivory); font-weight:600; margin-bottom:2px; }
+  .destaque-info span{ font-size:11.5px; color:var(--muted); }
+  .destaque-toggle{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .destaque-toggle input{ accent-color:var(--gold); width:18px; height:18px; }
+  .destaque-toggle span{ font-size:11px; letter-spacing:.04em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+  .destaque-counter{ font-size:11.5px; color:var(--muted); margin-bottom:14px; }
+  .destaque-counter b{ color:var(--gold-soft); }
 </style>
 </head>
 <body>
@@ -458,6 +559,30 @@
     <strong>Envio Rápido</strong>
     <p>Combinado direto com você no WhatsApp.</p>
   </div>
+</div>
+
+<div class="highlights-wrap" id="destaques">
+  <div class="highlights-head">
+    <h2>Destaques</h2>
+    <div class="highlights-nav">
+      <button type="button" class="hl-nav-btn" onclick="hlPrev()" aria-label="Destaque anterior">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="hl-nav-btn" onclick="hlNext()" aria-label="Próximo destaque">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="highlights-slider" id="highlights-slider">
+    <div class="highlights-track" id="highlights-track"></div>
+    <button type="button" class="highlights-arrow prev" onclick="hlPrev()" aria-label="Destaque anterior">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="highlights-arrow next" onclick="hlNext()" aria-label="Próximo destaque">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+  <div class="highlights-dots" id="highlights-dots"></div>
 </div>
 
 <section class="section" id="colecao">
@@ -598,49 +723,68 @@
   </div>
 
   <div id="admin-content" style="display:none;">
-    <div class="admin-block">
-      <h3>Cadastrar novo produto</h3>
-      <form id="admin-new-form" class="admin-new-box">
-        <div class="field">
-          <label for="n-nome">Nome do produto</label>
-          <input id="n-nome" type="text" placeholder="Nome do produto" />
-        </div>
-        <div class="field">
-          <label for="n-categoria">Categoria</label>
-          <div style="display:flex; gap:8px;">
-            <select id="n-categoria" style="flex:1;"></select>
-            <button type="button" class="btn btn-outline" style="white-space:nowrap;" onclick="addNewCategoryFor(document.getElementById('n-categoria'))">+ Nova</button>
-          </div>
-        </div>
-        <div class="field">
-          <label for="n-desc">Descrição</label>
-          <textarea id="n-desc" rows="3" placeholder="Descrição do produto"></textarea>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="n-preco">Preço (R$)</label>
-            <input id="n-preco" type="number" step="0.01" min="0" placeholder="0,00" />
-          </div>
-          <div class="field">
-            <label for="n-status">Status</label>
-            <select id="n-status">
-              <option value="ativo">Ativo</option>
-              <option value="inativo">Inativo</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label for="n-foto">Foto do produto</label>
-          <input id="n-foto" type="file" accept="image/*" />
-        </div>
-        <button type="submit" class="btn btn-wine" style="width:100%;">Cadastrar Produto</button>
-      </form>
+    <div class="admin-tabs">
+      <button type="button" class="admin-tab-btn active" data-tab="cadastro" onclick="switchAdminTab('cadastro')">Cadastro</button>
+      <button type="button" class="admin-tab-btn" data-tab="destaques" onclick="switchAdminTab('destaques')">Destaques</button>
     </div>
 
-    <div class="admin-block">
-      <h3>Produtos cadastrados</h3>
-      <div id="admin-cat-tabs" class="cat-tabs"></div>
-      <div id="admin-product-list"></div>
+    <div class="admin-tab-panel active" id="admin-tab-cadastro">
+      <div class="admin-block">
+        <h3>Cadastrar novo produto</h3>
+        <form id="admin-new-form" class="admin-new-box">
+          <div class="field">
+            <label for="n-nome">Nome do produto</label>
+            <input id="n-nome" type="text" placeholder="Nome do produto" />
+          </div>
+          <div class="field">
+            <label for="n-categoria">Categoria</label>
+            <div style="display:flex; gap:8px;">
+              <select id="n-categoria" style="flex:1;"></select>
+              <button type="button" class="btn btn-outline" style="white-space:nowrap;" onclick="addNewCategoryFor(document.getElementById('n-categoria'))">+ Nova</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="n-desc">Descrição</label>
+            <textarea id="n-desc" rows="3" placeholder="Descrição do produto"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="n-preco">Preço (R$)</label>
+              <input id="n-preco" type="number" step="0.01" min="0" placeholder="0,00" />
+            </div>
+            <div class="field">
+              <label for="n-status">Status</label>
+              <select id="n-status">
+                <option value="ativo">Ativo</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-checkbox-row">
+            <input type="checkbox" id="n-destaque" />
+            <label for="n-destaque">Mostrar no slide de Destaques</label>
+          </div>
+          <div class="field">
+            <label for="n-foto">Foto do produto</label>
+            <input id="n-foto" type="file" accept="image/*" />
+          </div>
+          <button type="submit" class="btn btn-wine" style="width:100%;">Cadastrar Produto</button>
+        </form>
+      </div>
+
+      <div class="admin-block">
+        <h3>Produtos cadastrados</h3>
+        <div id="admin-cat-tabs" class="cat-tabs"></div>
+        <div id="admin-product-list"></div>
+      </div>
+    </div>
+
+    <div class="admin-tab-panel" id="admin-tab-destaques">
+      <div class="admin-block">
+        <h3>Gerenciar Destaques</h3>
+        <p class="destaque-counter">Selecionados: <b id="destaque-count">0</b> de 8 (máximo exibido no slide)</p>
+        <div id="destaque-manager-list"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -710,7 +854,8 @@ async function fetchProducts(){
       categoria: canonicalCategory(p.categoria),
       preco: Number(p.preco) || 0,
       desc: p.descricao || '',
-      img: p.foto_url || 'https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'
+      img: p.foto_url || 'https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem',
+      destaque: !!p.destaque
     }));
   } catch(err){
     console.error('Erro ao carregar produtos do Supabase:', err);
@@ -795,6 +940,103 @@ wireSearch(document.getElementById('search-input-mobile'));
 function toggleMobileSearch(){
   document.getElementById('search-mobile').classList.toggle('open');
 }
+
+/* ============================================================
+   SLIDER DE DESTAQUES
+   ============================================================ */
+let hlSlides = [];
+let hlIndex = 0;
+let hlTimer = null;
+
+function buildHighlights(){
+  // usa produtos marcados como destaque; se não houver nenhum, cai para os 5 mais recentes ativos
+  let picked = PRODUCTS.filter(p => p.destaque);
+  if (picked.length === 0) picked = PRODUCTS.slice(0, 5);
+  hlSlides = picked.slice(0, 8);
+
+  const wrap = document.getElementById('destaques');
+  const track = document.getElementById('highlights-track');
+  const dots = document.getElementById('highlights-dots');
+
+  if (hlSlides.length === 0){
+    if (wrap) wrap.style.display = 'none';
+    return;
+  }
+  if (wrap) wrap.style.display = '';
+
+  track.innerHTML = hlSlides.map(p => `
+    <div class="hl-slide" onclick="hlGoToProduct(${p.id})">
+      <div class="hl-slide-info">
+        <span class="hl-tag">Destaque</span>
+        <h3>${p.nome}</h3>
+        <p>${p.desc}</p>
+        <div class="hl-slide-foot">
+          <span class="hl-price">${money(p.preco)}</span>
+        </div>
+      </div>
+      <div class="hl-slide-img">
+        <img src="${p.img}" alt="${p.nome}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
+      </div>
+    </div>
+  `).join('');
+
+  dots.innerHTML = hlSlides.map((_, i) => `<span class="hl-dot${i === 0 ? ' active' : ''}" onclick="hlGoTo(${i})"></span>`).join('');
+  dots.style.display = hlSlides.length > 1 ? 'flex' : 'none';
+
+  const arrows = document.querySelectorAll('.highlights-arrow, .hl-nav-btn');
+  arrows.forEach(a => a.style.display = hlSlides.length > 1 ? '' : 'none');
+
+  hlIndex = 0;
+  hlUpdate();
+  hlStartAuto();
+}
+
+function hlUpdate(){
+  const track = document.getElementById('highlights-track');
+  if (!track) return;
+  track.style.transform = `translateX(-${hlIndex * 100}%)`;
+  document.querySelectorAll('.hl-dot').forEach((d, i) => d.classList.toggle('active', i === hlIndex));
+}
+
+function hlGoTo(i){
+  hlIndex = (i + hlSlides.length) % hlSlides.length;
+  hlUpdate();
+  hlStartAuto();
+}
+function hlNext(){ hlGoTo(hlIndex + 1); }
+function hlPrev(){ hlGoTo(hlIndex - 1); }
+
+function hlGoToProduct(id){
+  const grid = document.getElementById('colecao');
+  const prod = PRODUCTS.find(p => p.id === id);
+  if (prod) selectCategory(prod.categoria);
+  if (grid) grid.scrollIntoView({ behavior:'smooth' });
+}
+
+function hlStartAuto(){
+  clearInterval(hlTimer);
+  if (hlSlides.length > 1){
+    hlTimer = setInterval(() => { hlIndex = (hlIndex + 1) % hlSlides.length; hlUpdate(); }, 5000);
+  }
+}
+
+// pausa o slide automático ao interagir com o dedo/mouse
+(function wireHighlightsSwipe(){
+  const slider = document.getElementById('highlights-slider');
+  if (!slider) return;
+  let startX = 0, dx = 0, dragging = false;
+
+  slider.addEventListener('pointerdown', (e) => { dragging = true; startX = e.clientX; dx = 0; clearInterval(hlTimer); });
+  slider.addEventListener('pointermove', (e) => { if (dragging) dx = e.clientX - startX; });
+  slider.addEventListener('pointerup', () => {
+    if (!dragging) return;
+    dragging = false;
+    if (dx > 40) hlPrev();
+    else if (dx < -40) hlNext();
+    else hlStartAuto();
+  });
+  slider.addEventListener('pointerleave', () => { if (dragging){ dragging = false; hlStartAuto(); } });
+})();
 
 // Limpa restos de cache de uma versão antiga do site (planilha Google Sheets),
 // que podem estar ocupando espaço sem necessidade.
@@ -1001,6 +1243,7 @@ function initApp(){
   renderCatTabs();
   renderProducts();
   renderCart();
+  buildHighlights();
 }
 
 /* ============================================================
@@ -1042,6 +1285,13 @@ function addNewCategoryFor(selectEl){
   selectEl.value = trimmed;
 }
 
+function switchAdminTab(tab){
+  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.getElementById('admin-tab-cadastro').classList.toggle('active', tab === 'cadastro');
+  document.getElementById('admin-tab-destaques').classList.toggle('active', tab === 'destaques');
+  if (tab === 'destaques') renderDestaqueManager();
+}
+
 function checkAdminPassword(){
   const val = document.getElementById('admin-pass').value;
   const errEl = document.getElementById('admin-login-error');
@@ -1079,9 +1329,80 @@ async function loadAdminList(){
     ADMIN_PRODUCTS = data || [];
     renderAdminCatTabs();
     renderAdminListFiltered();
+    const destaquesTabOpen = document.getElementById('admin-tab-destaques').classList.contains('active');
+    if (destaquesTabOpen) renderDestaqueManager();
   } catch(err){
     console.error(err);
     wrap.innerHTML = `<p class="empty-note">Erro ao carregar produtos do painel.</p>`;
+  }
+}
+
+/* ============================================================
+   ABA DESTAQUES — marcar/desmarcar produtos do slide
+   ============================================================ */
+const MAX_DESTAQUES = 8;
+
+function destaqueManagerHTML(p){
+  return `
+    <div class="destaque-item${p.destaque ? ' is-active' : ''}" data-id="${p.id}">
+      <img class="destaque-thumb" src="${p.foto_url || 'https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'}" alt="${escapeAttr(p.nome)}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
+      <div class="destaque-info">
+        <h4>${escapeHTML(p.nome)}</h4>
+        <span>${escapeHTML(p.categoria || '')} · ${p.status === 'ativo' ? 'Ativo' : 'Inativo'}</span>
+      </div>
+      <label class="destaque-toggle">
+        <span>Destaque</span>
+        <input type="checkbox" class="d-toggle" ${p.destaque ? 'checked' : ''} onchange="toggleDestaque(${p.id}, this)" />
+      </label>
+    </div>`;
+}
+
+function updateDestaqueCount(){
+  const el = document.getElementById('destaque-count');
+  if (el) el.textContent = ADMIN_PRODUCTS.filter(p => p.destaque).length;
+}
+
+function renderDestaqueManager(){
+  const wrap = document.getElementById('destaque-manager-list');
+  if (!wrap) return;
+  if (!ADMIN_PRODUCTS.length){
+    wrap.innerHTML = `<p class="empty-note">Nenhum produto cadastrado ainda.</p>`;
+    updateDestaqueCount();
+    return;
+  }
+  // destaques primeiro, depois o restante
+  const sorted = [...ADMIN_PRODUCTS].sort((a,b) => (b.destaque === true) - (a.destaque === true));
+  wrap.innerHTML = sorted.map(p => destaqueManagerHTML(p)).join('');
+  updateDestaqueCount();
+}
+
+async function toggleDestaque(id, inputEl){
+  const prod = ADMIN_PRODUCTS.find(p => p.id === id);
+  if (!prod) return;
+
+  const currentCount = ADMIN_PRODUCTS.filter(p => p.destaque).length;
+  if (inputEl.checked && currentCount >= MAX_DESTAQUES){
+    inputEl.checked = false;
+    showToast(`Máximo de ${MAX_DESTAQUES} produtos em destaque`);
+    return;
+  }
+
+  const novoValor = inputEl.checked;
+  inputEl.disabled = true;
+  try{
+    const { error } = await supabaseClient.from('produtos').update({ destaque: novoValor }).eq('id', id);
+    if (error) throw error;
+    prod.destaque = novoValor;
+    inputEl.closest('.destaque-item').classList.toggle('is-active', novoValor);
+    updateDestaqueCount();
+    showToast(novoValor ? 'Adicionado aos destaques' : 'Removido dos destaques');
+    await fetchProducts();
+  } catch(err){
+    console.error(err);
+    inputEl.checked = !novoValor;
+    showToast('Erro ao atualizar destaque');
+  } finally {
+    inputEl.disabled = false;
   }
 }
 
@@ -1140,6 +1461,10 @@ function adminItemHTML(p){
           </select>
         </div>
       </div>
+      <div class="admin-checkbox-row">
+        <input type="checkbox" class="a-destaque" id="a-destaque-${p.id}" ${p.destaque ? 'checked' : ''} />
+        <label for="a-destaque-${p.id}">Mostrar no slide de Destaques</label>
+      </div>
       <div class="field"><label>Trocar foto (opcional)</label><input type="file" accept="image/*" class="a-foto" /></div>
       <div class="admin-item-actions">
         <button type="button" class="btn btn-wine" onclick="saveAdminProduct(${p.id}, this)">Salvar</button>
@@ -1156,6 +1481,7 @@ async function saveAdminProduct(id, btn){
   const descricao = item.querySelector('.a-desc').value.trim();
   const preco = parseFloat(item.querySelector('.a-preco').value) || 0;
   const status = item.querySelector('.a-status').value;
+  const destaque = item.querySelector('.a-destaque').checked;
   const file = item.querySelector('.a-foto').files[0];
 
   if (!nome){
@@ -1168,7 +1494,7 @@ async function saveAdminProduct(id, btn){
   btn.textContent = 'Salvando...';
 
   try{
-    const updateData = { nome, categoria, descricao, preco, status };
+    const updateData = { nome, categoria, descricao, preco, status, destaque };
     if (file) updateData.foto_url = await uploadFoto(file);
 
     const { error } = await supabaseClient.from('produtos').update(updateData).eq('id', id);
@@ -1207,6 +1533,7 @@ document.getElementById('admin-new-form').addEventListener('submit', async (e) =
   const descricao = document.getElementById('n-desc').value.trim();
   const preco = parseFloat(document.getElementById('n-preco').value) || 0;
   const status = document.getElementById('n-status').value;
+  const destaque = document.getElementById('n-destaque').checked;
   const file = document.getElementById('n-foto').files[0];
 
   if (!nome){
@@ -1223,7 +1550,7 @@ document.getElementById('admin-new-form').addEventListener('submit', async (e) =
     let foto_url = null;
     if (file) foto_url = await uploadFoto(file);
 
-    const { error } = await supabaseClient.from('produtos').insert([{ nome, categoria, descricao, preco, status, foto_url }]);
+    const { error } = await supabaseClient.from('produtos').insert([{ nome, categoria, descricao, preco, status, destaque, foto_url }]);
     if (error) throw error;
 
     showToast('Produto cadastrado com sucesso');
