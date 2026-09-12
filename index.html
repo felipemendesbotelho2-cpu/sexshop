@@ -166,34 +166,29 @@
     will-change:transform;
   }
   .hl-slide{
-    flex:0 0 100%; position:relative; display:grid; grid-template-columns:1fr;
-    min-height:140px; cursor:pointer;
+    flex:0 0 100%; position:relative; cursor:pointer;
+    aspect-ratio:16/9; overflow:hidden;
   }
-  @media (min-width:720px){
-    .hl-slide{ grid-template-columns: 1.3fr 1fr; min-height:150px; }
-  }
-  .hl-slide-img{ position:relative; overflow:hidden; background:var(--panel-2); order:2; max-height:190px; }
-  @media (min-width:720px){ .hl-slide-img{ order:2; max-height:none; } }
-  .hl-slide-img img{ width:100%; height:100%; object-fit:cover; max-height:130px; }
-  @media (min-width:720px){ .hl-slide-img img{ max-height:none; min-height:150px; } }
+  @media (min-width:720px){ .hl-slide{ aspect-ratio:21/8; } }
+  .hl-slide-img{ position:absolute; inset:0; background:var(--panel-2); }
+  .hl-slide-img img{ width:100%; height:100%; object-fit:cover; }
   .hl-slide-img::after{
     content:''; position:absolute; inset:0;
-    background:linear-gradient(90deg, var(--panel) 0%, transparent 18%);
-    display:none;
+    background:linear-gradient(0deg, rgba(10,3,4,0.88) 0%, rgba(10,3,4,0.35) 45%, transparent 72%);
   }
-  @media (min-width:720px){ .hl-slide-img::after{ display:block; } }
   .hl-slide-info{
-    order:1; padding:14px 16px; display:flex; flex-direction:column; justify-content:center;
-    gap:6px; position:relative; z-index:1;
+    position:absolute; left:0; right:0; bottom:0; z-index:1;
+    padding:14px 16px; display:flex; flex-direction:column; gap:4px;
   }
   .hl-tag{
     align-self:flex-start; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
     font-weight:700; color:var(--gold); border:1px solid var(--gold); padding:3px 9px;
+    background:rgba(10,3,4,0.5); margin-bottom:2px;
   }
-  .hl-slide-info h3{ font-size:clamp(15px,2vw,18px); color:var(--ivory); line-height:1.2; }
-  .hl-slide-info p{ font-size:11.5px; color:var(--muted); line-height:1.4; max-width:420px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .hl-slide-info h3{ font-size:clamp(15px,3vw,19px); color:var(--ivory); line-height:1.2; }
+  .hl-slide-info p{ display:none; }
   .hl-slide-foot{ display:flex; align-items:center; gap:16px; margin-top:2px; }
-  .hl-price{ font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--gold-soft); font-weight:600; }
+  .hl-price{ font-family:'Cormorant Garamond',serif; font-size:19px; color:var(--gold-soft); font-weight:600; }
 
   .highlights-dots{
     display:flex; justify-content:center; gap:6px; padding:10px 0 2px;
@@ -968,16 +963,15 @@ function buildHighlights(){
 
   track.innerHTML = hlSlides.map(p => `
     <div class="hl-slide" onclick="hlGoToProduct(${p.id})">
+      <div class="hl-slide-img">
+        <img src="${p.img}" alt="${p.nome}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
+      </div>
       <div class="hl-slide-info">
         <span class="hl-tag">Destaque</span>
         <h3>${p.nome}</h3>
-        <p>${p.desc}</p>
         <div class="hl-slide-foot">
           <span class="hl-price">${money(p.preco)}</span>
         </div>
-      </div>
-      <div class="hl-slide-img">
-        <img src="${p.img}" alt="${p.nome}" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
       </div>
     </div>
   `).join('');
