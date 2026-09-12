@@ -1674,59 +1674,55 @@ function renderFaturamento(){
 
 function buildEvolutionData(period){
   const now = new Date();
+  let labels = [];
+  let raw = [];
 
   if (period === 'dia'){
     const start = startOfPeriod('dia');
-    const labels = Array.from({ length: 24 }, (_, h) => `${h}h`);
-    const values = new Array(24).fill(0);
+    labels = Array.from({ length: 24 }, (_, h) => `${h}h`);
+    raw = new Array(24).fill(0);
     VENDAS.forEach(v => {
       const d = new Date(v.criado_em);
-      if (d >= start) values[d.getHours()] += Number(v.valor_total) || 0;
+      if (d >= start) raw[d.getHours()] += Number(v.valor_total) || 0;
     });
-    return { labels, values };
-  }
-
-  if (period === 'semana'){
+  } else if (period === 'semana'){
     const start = startOfPeriod('semana');
-    const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-    const values = new Array(7).fill(0);
+    labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    raw = new Array(7).fill(0);
     VENDAS.forEach(v => {
       const d = new Date(v.criado_em);
       if (d >= start){
         const diffDays = Math.floor((d - start) / 86400000);
-        if (diffDays >= 0 && diffDays < 7) values[diffDays] += Number(v.valor_total) || 0;
+        if (diffDays >= 0 && diffDays < 7) raw[diffDays] += Number(v.valor_total) || 0;
       }
     });
-    return { labels, values };
-  }
-
-  if (period === 'mes'){
+  } else if (period === 'mes'){
     const start = startOfPeriod('mes');
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const labels = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
-    const values = new Array(daysInMonth).fill(0);
+    labels = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
+    raw = new Array(daysInMonth).fill(0);
     VENDAS.forEach(v => {
       const d = new Date(v.criado_em);
       if (d >= start){
         const dayIdx = d.getDate() - 1;
-        if (dayIdx >= 0 && dayIdx < daysInMonth) values[dayIdx] += Number(v.valor_total) || 0;
+        if (dayIdx >= 0 && dayIdx < daysInMonth) raw[dayIdx] += Number(v.valor_total) || 0;
       }
     });
-    return { labels, values };
-  }
-
-  if (period === 'ano'){
+  } else if (period === 'ano'){
     const start = startOfPeriod('ano');
-    const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    const values = new Array(12).fill(0);
+    labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    raw = new Array(12).fill(0);
     VENDAS.forEach(v => {
       const d = new Date(v.criado_em);
-      if (d >= start) values[d.getMonth()] += Number(v.valor_total) || 0;
+      if (d >= start) raw[d.getMonth()] += Number(v.valor_total) || 0;
     });
-    return { labels, values };
   }
 
-  return { labels: [], values: [] };
+  // acumulado — a linha só sobe dentro do período, nunca desce
+  let running = 0;
+  const values = raw.map(v => { running += v; return running; });
+
+  return { labels, values };
 }
 
 let fatChart = null;
@@ -1739,19 +1735,20 @@ function renderEvolutionChart(){
   if (fatChart){ fatChart.destroy(); fatChart = null; }
 
   fatChart = new Chart(canvas.getContext('2d'), {
-    type: (activePeriod === 'dia' || activePeriod === 'semana') ? 'bar' : 'line',
+    type: 'line',
     data: {
       labels,
       datasets: [{
-        label: 'Faturamento',
+        label: 'Faturamento acumulado',
         data: values,
         backgroundColor: 'rgba(201,162,74,0.35)',
         borderColor: '#c9a24a',
         borderWidth: 2,
         pointBackgroundColor: '#c9a24a',
         pointRadius: 2.5,
-        tension: 0.3,
-        fill: true
+        tension: 0.35,
+        fill: true,
+        stepped: false
       }]
     },
     options: {
