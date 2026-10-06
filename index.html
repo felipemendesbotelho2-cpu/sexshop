@@ -292,6 +292,13 @@ Há 6 anos fazendo casais felizes </title>
     border:1px solid var(--gold); color:var(--gold-soft); font-size:8.5px; letter-spacing:.1em;
     text-transform:uppercase; padding:3px 8px; font-weight:700;
   }
+  .size-mark{
+    position:absolute; left:0; right:0; bottom:0; text-align:center;
+    background:linear-gradient(to top, rgba(23,6,8,0.88), rgba(23,6,8,0));
+    color:var(--gold-soft); font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+    font-weight:700; padding:22px 8px 9px; pointer-events:none;
+    text-shadow:0 1px 3px rgba(0,0,0,.6);
+  }
   .card-body{ padding:12px 12px 14px; display:flex; flex-direction:column; flex:1; }
   .card-body h3{ font-size:14.5px; color:var(--ivory); line-height:1.25; margin-bottom:4px; font-weight:600; }
   .card-body .desc{ font-size:11px; color:var(--muted); line-height:1.45; margin-bottom:10px; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
@@ -804,6 +811,15 @@ Há 6 anos fazendo casais felizes </title>
               </select>
             </div>
           </div>
+          <div class="field">
+            <label for="n-tamanho">Tamanho (marca d'água na foto)</label>
+            <select id="n-tamanho">
+              <option value="">Sem marca de tamanho</option>
+              <option value="P">P</option>
+              <option value="M">M</option>
+              <option value="G">G</option>
+            </select>
+          </div>
           <div class="admin-checkbox-row">
             <input type="checkbox" id="n-destaque" />
             <label for="n-destaque">Mostrar no slide de Destaques</label>
@@ -938,7 +954,8 @@ async function fetchProducts(){
       preco: Number(p.preco) || 0,
       desc: p.descricao || '',
       img: p.foto_url || 'https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem',
-      destaque: !!p.destaque
+      destaque: !!p.destaque,
+      tamanho: p.tamanho || ''
     }));
   } catch(err){
     console.error('Erro ao carregar produtos do Supabase:', err);
@@ -955,6 +972,7 @@ function cardHTML(p, extraClass){
       <div class="card-img">
         <img src="${p.img}" alt="${p.nome}" loading="lazy" onerror="this.src='https://placehold.co/600x750/2f0f16/e7cf94?text=Sem+Imagem'" />
         <span class="card-tag">${p.categoria}</span>
+        ${p.tamanho ? `<span class="size-mark">Tamanho ${escapeHTML(p.tamanho)}</span>` : ''}
       </div>
       <div class="card-body">
         <h3>${p.nome}</h3>
@@ -1825,6 +1843,15 @@ function adminItemHTML(p){
           </select>
         </div>
       </div>
+      <div class="field">
+        <label>Tamanho (marca d'água na foto)</label>
+        <select class="a-tamanho">
+          <option value="" ${!p.tamanho ? 'selected' : ''}>Sem marca de tamanho</option>
+          <option value="P" ${p.tamanho === 'P' ? 'selected' : ''}>P</option>
+          <option value="M" ${p.tamanho === 'M' ? 'selected' : ''}>M</option>
+          <option value="G" ${p.tamanho === 'G' ? 'selected' : ''}>G</option>
+        </select>
+      </div>
       <div class="admin-checkbox-row">
         <input type="checkbox" class="a-destaque" id="a-destaque-${p.id}" ${p.destaque ? 'checked' : ''} />
         <label for="a-destaque-${p.id}">Mostrar no slide de Destaques</label>
@@ -1846,6 +1873,7 @@ async function saveAdminProduct(id, btn){
   const preco = parseFloat(item.querySelector('.a-preco').value) || 0;
   const status = item.querySelector('.a-status').value;
   const destaque = item.querySelector('.a-destaque').checked;
+  const tamanho = item.querySelector('.a-tamanho').value || null;
   const file = item.querySelector('.a-foto').files[0];
 
   if (!nome){
@@ -1858,7 +1886,7 @@ async function saveAdminProduct(id, btn){
   btn.textContent = 'Salvando...';
 
   try{
-    const updateData = { nome, categoria, descricao, preco, status, destaque };
+    const updateData = { nome, categoria, descricao, preco, status, destaque, tamanho };
     if (file) updateData.foto_url = await uploadFoto(file);
 
     const { error } = await supabaseClient.from('produtos').update(updateData).eq('id', id);
@@ -1898,6 +1926,7 @@ document.getElementById('admin-new-form').addEventListener('submit', async (e) =
   const preco = parseFloat(document.getElementById('n-preco').value) || 0;
   const status = document.getElementById('n-status').value;
   const destaque = document.getElementById('n-destaque').checked;
+  const tamanho = document.getElementById('n-tamanho').value || null;
   const file = document.getElementById('n-foto').files[0];
 
   if (!nome){
@@ -1914,7 +1943,7 @@ document.getElementById('admin-new-form').addEventListener('submit', async (e) =
     let foto_url = null;
     if (file) foto_url = await uploadFoto(file);
 
-    const { error } = await supabaseClient.from('produtos').insert([{ nome, categoria, descricao, preco, status, destaque, foto_url }]);
+    const { error } = await supabaseClient.from('produtos').insert([{ nome, categoria, descricao, preco, status, destaque, foto_url, tamanho }]);
     if (error) throw error;
 
     showToast('Produto cadastrado com sucesso');
