@@ -557,9 +557,51 @@ Há 6 anos fazendo casais felizes </title>
   .venda-item .venda-valor{ font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--gold-soft); font-weight:600; white-space:nowrap; }
 
   .chart-wrap{ background:var(--panel); border:1px solid var(--panel-line); padding:16px 12px; margin-bottom:22px; }
+
+  /* ============ VERIFICAÇÃO DE MAIORIDADE ============ */
+  .age-gate{
+    position:fixed; inset:0; z-index:1000;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background:rgba(6,2,3,0.88);
+    backdrop-filter:blur(8px);
+    opacity:0; pointer-events:none; transition:opacity .3s;
+  }
+  .age-gate.show{ opacity:1; pointer-events:auto; }
+  .age-gate-box{
+    width:100%; max-width:420px; text-align:center;
+    background:var(--void); border:1px solid var(--gold);
+    padding:34px 26px 28px; border-radius:4px;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.8), 0 0 40px -10px var(--wine-glow);
+    transform:translateY(16px) scale(.97); transition:transform .35s ease;
+  }
+  .age-gate.show .age-gate-box{ transform:none; }
+  .age-gate-box .seal-mark{ width:52px; height:52px; font-size:26px; margin:0 auto 16px; }
+  .age-gate-box h2{ font-size:26px; color:var(--ivory); margin:8px 0 10px; }
+  .age-gate-box p{ font-size:13px; color:var(--muted); line-height:1.55; margin-bottom:6px; }
+  .age-gate-box p strong{ color:var(--gold-soft); }
+  .age-gate-actions{ display:flex; flex-direction:column; gap:10px; margin-top:22px; }
+  .age-gate-actions .btn{ width:100%; }
+  .age-gate-denied{ display:none; font-size:12px; color:#e08a95; margin-top:14px; }
+  body.age-locked{ overflow:hidden; }
 </style>
 </head>
 <body>
+
+<div class="age-gate" id="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
+  <div class="age-gate-box">
+    <div class="seal-mark">S</div>
+    <span class="eyebrow">Conteúdo adulto</span>
+    <h2 id="age-gate-title">Você é maior de 18 anos?</h2>
+    <p>Este site é <strong>exclusivo para maiores de 18 anos</strong> e contém produtos destinados ao público adulto.</p>
+    <p>Ao continuar, você confirma ter idade legal para acessar este conteúdo.</p>
+    <div class="age-gate-actions">
+      <button type="button" class="btn btn-wine" onclick="confirmAge(true)">Sim, tenho 18 anos ou mais</button>
+      <button type="button" class="btn btn-outline" onclick="confirmAge(false)">Não, sou menor de idade</button>
+    </div>
+    <p class="age-gate-denied" id="age-gate-denied">Desculpe, o acesso é permitido somente para maiores de 18 anos.</p>
+  </div>
+</div>
 
 <header>
   <div class="header-inner">
@@ -893,6 +935,31 @@ Há 6 anos fazendo casais felizes </title>
 
 <script>
 const WHATSAPP_NUMBER = "5563981069130";
+
+/* ============================================================
+   VERIFICAÇÃO DE MAIORIDADE (+18) — pergunta a cada nova visita
+   ============================================================ */
+const AGE_KEY = 'saint_age_ok';
+
+(function initAgeGate(){
+  let ok = false;
+  try{ ok = sessionStorage.getItem(AGE_KEY) === '1'; } catch(e){}
+  if (ok) return;
+  const gate = document.getElementById('age-gate');
+  document.body.classList.add('age-locked');
+  requestAnimationFrame(() => gate.classList.add('show'));
+})();
+
+function confirmAge(isAdult){
+  if (isAdult){
+    try{ sessionStorage.setItem(AGE_KEY, '1'); } catch(e){}
+    document.getElementById('age-gate').classList.remove('show');
+    document.body.classList.remove('age-locked');
+  } else {
+    document.getElementById('age-gate-denied').style.display = 'block';
+    setTimeout(() => { window.location.href = 'https://www.google.com'; }, 1800);
+  }
+}
 
 /* ============================================================
    SUPABASE — troque pelos dados do SEU projeto
