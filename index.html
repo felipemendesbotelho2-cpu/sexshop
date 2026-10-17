@@ -115,6 +115,9 @@ Há 6 anos fazendo casais felizes </title>
   }
   .icon-btn:hover{ border-color:var(--panel-line); }
   .icon-btn svg{ width:18px; height:18px; }
+  .admin-toggle{ width:28px; height:28px; opacity:.28; color:var(--muted); transition:opacity .2s, border-color .2s; }
+  .admin-toggle:hover{ opacity:.8; }
+  .admin-toggle svg{ width:13px; height:13px; }
   .cart-badge{
     position:absolute; top:-2px; right:-2px; background:var(--wine); color:#fff;
     font-size:9px; font-weight:800; min-width:16px; height:16px; border-radius:50%;
@@ -484,8 +487,10 @@ Há 6 anos fazendo casais felizes </title>
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* ============ PAINEL ADMIN ============ */
-  #painel{ border-top:1px solid var(--panel-line); }
+  /* ============ PAINEL ADMIN (discreto, no topo) ============ */
+  #painel{ display:none; border-bottom:1px solid var(--panel-line); background:rgba(36,10,15,0.55); padding-top:28px; padding-bottom:40px; scroll-margin-top:64px; }
+  #painel.open{ display:block; }
+  .painel-close{ display:flex; justify-content:flex-end; margin-bottom:-8px; }
   .admin-box{
     max-width:340px; margin:0 auto; background:var(--panel);
     border:1px solid var(--panel-line); padding:22px; text-align:left;
@@ -616,6 +621,9 @@ Há 6 anos fazendo casais felizes </title>
     </div>
 
     <div class="header-actions">
+      <button class="icon-btn admin-toggle" onclick="togglePainel()" aria-label="Área restrita" title="Área restrita">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="1.5"/><path stroke-linecap="round" d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      </button>
       <button class="icon-btn search-toggle" onclick="toggleMobileSearch()" aria-label="Buscar">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5"/></svg>
       </button>
@@ -634,6 +642,143 @@ Há 6 anos fazendo casais felizes </title>
 </header>
 
 <div id="topo"></div>
+
+<!-- ============ PAINEL ADMIN (oculto; abre pelo cadeado discreto no topo) ============ -->
+<section class="section" id="painel">
+  <div class="painel-close">
+    <button type="button" class="close-btn" onclick="togglePainel(false)" aria-label="Fechar painel">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="section-head">
+    <span class="eyebrow">Área restrita</span>
+    <h2 style="font-size:clamp(20px,4vw,26px);">Painel Admin</h2>
+  </div>
+
+  <div id="admin-login" class="admin-box">
+    <div class="field">
+      <label for="admin-pass">Senha</label>
+      <input id="admin-pass" type="password" placeholder="Digite a senha" />
+    </div>
+    <button type="button" class="btn btn-wine" onclick="checkAdminPassword()" style="width:100%;">Entrar</button>
+    <p id="admin-login-error" class="field-error" style="display:none; margin-top:10px;">Senha incorreta.</p>
+  </div>
+
+  <div id="admin-content" style="display:none;">
+    <div class="admin-tabs">
+      <button type="button" class="admin-tab-btn active" data-tab="cadastro" onclick="switchAdminTab('cadastro')">Cadastro</button>
+      <button type="button" class="admin-tab-btn" data-tab="destaques" onclick="switchAdminTab('destaques')">Destaques</button>
+      <button type="button" class="admin-tab-btn" data-tab="painel" onclick="switchAdminTab('painel')">Painel</button>
+    </div>
+
+    <div class="admin-tab-panel active" id="admin-tab-cadastro">
+      <div class="admin-block">
+        <h3>Cadastrar novo produto</h3>
+        <form id="admin-new-form" class="admin-new-box">
+          <div class="field">
+            <label for="n-nome">Nome do produto</label>
+            <input id="n-nome" type="text" placeholder="Nome do produto" />
+          </div>
+          <div class="field">
+            <label for="n-categoria">Categoria</label>
+            <div style="display:flex; gap:8px;">
+              <select id="n-categoria" style="flex:1;"></select>
+              <button type="button" class="btn btn-outline" style="white-space:nowrap;" onclick="addNewCategoryFor(document.getElementById('n-categoria'))">+ Nova</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="n-desc">Descrição</label>
+            <textarea id="n-desc" rows="3" placeholder="Descrição do produto"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="n-preco">Preço (R$)</label>
+              <input id="n-preco" type="number" step="0.01" min="0" placeholder="0,00" />
+            </div>
+            <div class="field">
+              <label for="n-status">Status</label>
+              <select id="n-status">
+                <option value="ativo">Ativo</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="n-tamanho">Tamanho (marca d'água na foto)</label>
+            <select id="n-tamanho">
+              <option value="">Sem marca de tamanho</option>
+              <option value="P">P</option>
+              <option value="M">M</option>
+              <option value="G">G</option>
+            </select>
+          </div>
+          <div class="admin-checkbox-row">
+            <input type="checkbox" id="n-destaque" />
+            <label for="n-destaque">Mostrar no slide de Destaques</label>
+          </div>
+          <div class="field">
+            <label for="n-foto">Foto do produto</label>
+            <input id="n-foto" type="file" accept="image/*" />
+          </div>
+          <button type="submit" class="btn btn-wine" style="width:100%;">Cadastrar Produto</button>
+        </form>
+      </div>
+
+      <div class="admin-block">
+        <h3>Produtos cadastrados</h3>
+        <div id="admin-cat-tabs" class="cat-tabs"></div>
+        <div id="admin-product-list"></div>
+      </div>
+    </div>
+
+    <div class="admin-tab-panel" id="admin-tab-destaques">
+      <div class="admin-block">
+        <h3>Gerenciar Destaques</h3>
+        <p class="destaque-counter">Selecionados: <b id="destaque-count">0</b> de 8 (máximo exibido no slide)</p>
+        <div id="destaque-manager-list"></div>
+      </div>
+    </div>
+
+    <div class="admin-tab-panel" id="admin-tab-painel">
+      <div class="admin-block">
+        <h3>Registrar Venda</h3>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:16px; margin-top:-8px;">Use aqui para anotar vendas feitas fora do site (presencial, WhatsApp, etc).</p>
+        <form id="venda-form" class="admin-new-box">
+          <div class="field">
+            <label for="v-produto">Produto vendido</label>
+            <select id="v-produto"></select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="v-qtd">Quantidade</label>
+              <input id="v-qtd" type="number" min="1" step="1" value="1" />
+            </div>
+            <div class="field">
+              <label for="v-total">Total da venda</label>
+              <input id="v-total" type="text" disabled />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-wine" style="width:100%;">Confirmar Venda</button>
+        </form>
+      </div>
+
+      <div class="admin-block">
+        <h3>Faturamento</h3>
+        <div class="period-tabs" id="period-tabs">
+          <button type="button" class="period-tab active" data-period="dia" onclick="selectPeriod('dia')">Dia</button>
+          <button type="button" class="period-tab" data-period="semana" onclick="selectPeriod('semana')">Semana</button>
+          <button type="button" class="period-tab" data-period="mes" onclick="selectPeriod('mes')">Mês</button>
+          <button type="button" class="period-tab" data-period="ano" onclick="selectPeriod('ano')">Ano</button>
+        </div>
+        <div id="faturamento-summary"></div>
+        <div class="chart-wrap">
+          <canvas id="fat-chart" height="220"></canvas>
+        </div>
+        <div id="vendas-list"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="trust" id="seguranca">
   <div>
@@ -800,137 +945,6 @@ Há 6 anos fazendo casais felizes </title>
   </div>
 </div>
 
-<section class="section" id="painel">
-  <div class="section-head">
-    <span class="eyebrow">Área restrita</span>
-    <h2 style="font-size:clamp(20px,4vw,26px);">Painel Admin</h2>
-  </div>
-
-  <div id="admin-login" class="admin-box">
-    <div class="field">
-      <label for="admin-pass">Senha</label>
-      <input id="admin-pass" type="password" placeholder="Digite a senha" />
-    </div>
-    <button type="button" class="btn btn-wine" onclick="checkAdminPassword()" style="width:100%;">Entrar</button>
-    <p id="admin-login-error" class="field-error" style="display:none; margin-top:10px;">Senha incorreta.</p>
-  </div>
-
-  <div id="admin-content" style="display:none;">
-    <div class="admin-tabs">
-      <button type="button" class="admin-tab-btn active" data-tab="cadastro" onclick="switchAdminTab('cadastro')">Cadastro</button>
-      <button type="button" class="admin-tab-btn" data-tab="destaques" onclick="switchAdminTab('destaques')">Destaques</button>
-      <button type="button" class="admin-tab-btn" data-tab="painel" onclick="switchAdminTab('painel')">Painel</button>
-    </div>
-
-    <div class="admin-tab-panel active" id="admin-tab-cadastro">
-      <div class="admin-block">
-        <h3>Cadastrar novo produto</h3>
-        <form id="admin-new-form" class="admin-new-box">
-          <div class="field">
-            <label for="n-nome">Nome do produto</label>
-            <input id="n-nome" type="text" placeholder="Nome do produto" />
-          </div>
-          <div class="field">
-            <label for="n-categoria">Categoria</label>
-            <div style="display:flex; gap:8px;">
-              <select id="n-categoria" style="flex:1;"></select>
-              <button type="button" class="btn btn-outline" style="white-space:nowrap;" onclick="addNewCategoryFor(document.getElementById('n-categoria'))">+ Nova</button>
-            </div>
-          </div>
-          <div class="field">
-            <label for="n-desc">Descrição</label>
-            <textarea id="n-desc" rows="3" placeholder="Descrição do produto"></textarea>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="n-preco">Preço (R$)</label>
-              <input id="n-preco" type="number" step="0.01" min="0" placeholder="0,00" />
-            </div>
-            <div class="field">
-              <label for="n-status">Status</label>
-              <select id="n-status">
-                <option value="ativo">Ativo</option>
-                <option value="inativo">Inativo</option>
-              </select>
-            </div>
-          </div>
-          <div class="field">
-            <label for="n-tamanho">Tamanho (marca d'água na foto)</label>
-            <select id="n-tamanho">
-              <option value="">Sem marca de tamanho</option>
-              <option value="P">P</option>
-              <option value="M">M</option>
-              <option value="G">G</option>
-            </select>
-          </div>
-          <div class="admin-checkbox-row">
-            <input type="checkbox" id="n-destaque" />
-            <label for="n-destaque">Mostrar no slide de Destaques</label>
-          </div>
-          <div class="field">
-            <label for="n-foto">Foto do produto</label>
-            <input id="n-foto" type="file" accept="image/*" />
-          </div>
-          <button type="submit" class="btn btn-wine" style="width:100%;">Cadastrar Produto</button>
-        </form>
-      </div>
-
-      <div class="admin-block">
-        <h3>Produtos cadastrados</h3>
-        <div id="admin-cat-tabs" class="cat-tabs"></div>
-        <div id="admin-product-list"></div>
-      </div>
-    </div>
-
-    <div class="admin-tab-panel" id="admin-tab-destaques">
-      <div class="admin-block">
-        <h3>Gerenciar Destaques</h3>
-        <p class="destaque-counter">Selecionados: <b id="destaque-count">0</b> de 8 (máximo exibido no slide)</p>
-        <div id="destaque-manager-list"></div>
-      </div>
-    </div>
-
-    <div class="admin-tab-panel" id="admin-tab-painel">
-      <div class="admin-block">
-        <h3>Registrar Venda</h3>
-        <p style="font-size:12px; color:var(--muted); margin-bottom:16px; margin-top:-8px;">Use aqui para anotar vendas feitas fora do site (presencial, WhatsApp, etc).</p>
-        <form id="venda-form" class="admin-new-box">
-          <div class="field">
-            <label for="v-produto">Produto vendido</label>
-            <select id="v-produto"></select>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="v-qtd">Quantidade</label>
-              <input id="v-qtd" type="number" min="1" step="1" value="1" />
-            </div>
-            <div class="field">
-              <label for="v-total">Total da venda</label>
-              <input id="v-total" type="text" disabled />
-            </div>
-          </div>
-          <button type="submit" class="btn btn-wine" style="width:100%;">Confirmar Venda</button>
-        </form>
-      </div>
-
-      <div class="admin-block">
-        <h3>Faturamento</h3>
-        <div class="period-tabs" id="period-tabs">
-          <button type="button" class="period-tab active" data-period="dia" onclick="selectPeriod('dia')">Dia</button>
-          <button type="button" class="period-tab" data-period="semana" onclick="selectPeriod('semana')">Semana</button>
-          <button type="button" class="period-tab" data-period="mes" onclick="selectPeriod('mes')">Mês</button>
-          <button type="button" class="period-tab" data-period="ano" onclick="selectPeriod('ano')">Ano</button>
-        </div>
-        <div id="faturamento-summary"></div>
-        <div class="chart-wrap">
-          <canvas id="fat-chart" height="220"></canvas>
-        </div>
-        <div id="vendas-list"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -971,7 +985,7 @@ const supabaseClient = (window.supabase && window.supabase.createClient)
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
 
-// Senha para acessar o painel admin no fim da página. Troque aqui.
+// Senha para acessar o painel admin (cadeado discreto no topo). Troque aqui.
 const ADMIN_PASSWORD = "admsexshop123";
 
 function money(v){ return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
@@ -1131,13 +1145,18 @@ function cardHTML(p, extraClass){
     </div>`;
 }
 
-let activeCategory = 'Todos';
+// Sem aba "Todos": a loja abre sempre em uma categoria específica.
+let activeCategory = '';
+
+function ensureActiveCategory(){
+  if (!CATEGORIES.includes(activeCategory)) activeCategory = CATEGORIES[0] || '';
+}
 
 function renderCatTabs(){
   const wrap = document.getElementById('cat-tabs');
   if(!wrap) return;
-  const cats = ['Todos', ...CATEGORIES];
-  wrap.innerHTML = cats.map(c => `
+  ensureActiveCategory();
+  wrap.innerHTML = CATEGORIES.map(c => `
     <button type="button" class="cat-tab${c === activeCategory ? ' active' : ''}" onclick="selectCategory('${c.replace(/'/g, "\\'")}')">${c}</button>
   `).join('');
 }
@@ -1152,18 +1171,19 @@ function selectCategory(cat){
 function renderProducts(filter){
   const grid = document.getElementById('product-grid');
   if(!grid) return;
+  ensureActiveCategory();
   const term = (filter || '').trim().toLowerCase();
 
-  let list = activeCategory === 'Todos'
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.categoria === activeCategory);
-
+  let list;
   if (term){
-    list = list.filter(p => p.nome.toLowerCase().includes(term) || p.categoria.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term));
+    // buscando: procura em todas as categorias
+    list = PRODUCTS.filter(p => p.nome.toLowerCase().includes(term) || p.categoria.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term));
+  } else {
+    list = PRODUCTS.filter(p => p.categoria === activeCategory);
   }
 
   if (list.length === 0){
-    grid.innerHTML = `<p class="empty-note">Nenhum produto encontrado${filter ? ` para "${filter}"` : ''}.</p>`;
+    grid.innerHTML = `<p class="empty-note">Nenhum produto encontrado${filter ? ` para "${escapeHTML(filter)}"` : ''}.</p>`;
     return;
   }
 
@@ -1498,6 +1518,21 @@ function initApp(){
 /* ============================================================
    PAINEL ADMIN
    ============================================================ */
+function togglePainel(force){
+  const el = document.getElementById('painel');
+  if (!el) return;
+  const open = typeof force === 'boolean' ? force : !el.classList.contains('open');
+  el.classList.toggle('open', open);
+  if (open){
+    el.scrollIntoView({ behavior:'smooth' });
+    const pass = document.getElementById('admin-pass');
+    const login = document.getElementById('admin-login');
+    if (pass && login && login.style.display !== 'none') setTimeout(() => pass.focus({ preventScroll:true }), 350);
+  }
+}
+// atalho: abrir o site com #painel no endereço já abre o painel
+if (location.hash === '#painel') togglePainel(true);
+
 function escapeAttr(s){ return String(s || '').replace(/"/g, '&quot;'); }
 function escapeHTML(s){ return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
